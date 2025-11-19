@@ -32,7 +32,7 @@ const SearchInput = () => {
     // Build final URL
     const url = qs.stringifyUrl(
       {
-        url: "/dashboard",
+        url: "/dashboard?",
         query: updatedQuery,
       },
       { skipNull: true, skipEmptyString: true }

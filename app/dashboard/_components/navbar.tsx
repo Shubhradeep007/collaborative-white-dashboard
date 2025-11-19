@@ -7,10 +7,11 @@ import {
 } from "@clerk/nextjs";
 import SearchInput from "./search-input";
 import InviteButton from "./invite-button";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 
 const Navbar = () => {
 
-  const {organization} = useOrganization()
+  const { organization } = useOrganization()
 
 
   return (
@@ -44,10 +45,11 @@ const Navbar = () => {
           }}
         />
       </div>
-       {organization && (
+      <AnimatedThemeToggler />
+      {organization && (
 
-      <InviteButton />
-       )}   
+        <InviteButton />
+      )}
       <UserButton />
     </div>
   );
