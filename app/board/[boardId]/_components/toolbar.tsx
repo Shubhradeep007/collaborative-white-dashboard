@@ -1,16 +1,21 @@
+import { Circle, MousePointer2, Pencil, Redo, Square, StickyNote, Type, Undo } from "lucide-react";
+import { ToolButton } from "./toolbutton";
+
 export const Toolbar = () => {
   return (
     <div className="absolute top-[50%] -translate-y-[50%] left-2 flex flex-col gap-y-4">
       <div className="bg-white rounded-md p-1.5 flex gap-y-1 flex-col items-center shadow-md">
-        <div>Pencil</div>
-        <div>Circul</div>
-        <div>square</div>
-        <div>Elipcies</div>
+        <ToolButton lebel="select" icon={MousePointer2} onClick={() => { }} isActive={false} />
+        <ToolButton lebel="text" icon={Type} onClick={() => { }} isActive={false} />
+        <ToolButton lebel="Sticky Note" icon={StickyNote} onClick={() => { }} isActive={false} />
+        <ToolButton lebel="Rectangle" icon={Square} onClick={() => { }} isActive={false} />
+        <ToolButton lebel="Ellipse" icon={Circle} onClick={() => { }} isActive={false} />
+        <ToolButton lebel="Pen" icon={Pencil} onClick={() => { }} isActive={false} />
       </div>
 
       <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md ">
-        <div>Undo</div>
-        <div>Redo</div>
+        <ToolButton lebel="Undo" icon={Undo} onClick={() => { }} isDisabled={true}/>
+        <ToolButton lebel="Redo" icon={Redo} onClick={() => { }} isDisabled={true}/>
       </div>
     </div>
   );
