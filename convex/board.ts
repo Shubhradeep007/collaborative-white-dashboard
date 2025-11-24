@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 const images = ["/placeholder/1.jpg", "/placeholder/2.jpg"];
 
@@ -37,7 +37,20 @@ export const remove = mutation({
       throw new Error("Unauthorized!");
     }
 
-    //Todo: later check to favariote reation as well
+    const userId = identity.subject
+
+    const exsistingFavorite = await ctx.db
+    .query("usesFavroites")
+    .withIndex("by_user_board", (q) => 
+    q
+    .eq("userId", userId)
+    .eq("boardId", args.id)
+    )
+    .unique()
+
+    if(exsistingFavorite){
+      await ctx.db.delete(exsistingFavorite._id)
+    }
 
     await ctx.db.delete(args.id);
   },
@@ -85,8 +98,8 @@ export const Favorite = mutation({
 
     const exsistingFavorite = await ctx.db
       .query("usesFavroites")
-      .withIndex("by_user_board_org", (q) =>
-        q.eq("userId", userId).eq("boardId", board._id).eq("orgId", args.orgId)
+      .withIndex("by_user_board", (q) =>
+        q.eq("userId", userId).eq("boardId", board._id)
       )
       .unique();
 
@@ -137,3 +150,10 @@ export const UnFavorite = mutation({
   },
 });
 
+export const get = query({
+  args: { id: v.id("boards") },
+  handler: async (ctx, args) => {
+    const board = ctx.db.get(args.id)
+    return board
+  }
+})

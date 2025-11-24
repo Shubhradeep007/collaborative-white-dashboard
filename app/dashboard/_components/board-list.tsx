@@ -19,7 +19,10 @@ interface BoradListProps {
 }
 
 const Boardlist = ({ orgId, query }: BoradListProps) => {
-  const data = useQuery(api.boards.get, { orgId });
+  const data = useQuery(api.boards.get, { 
+    orgId,
+    ...query,
+  });
 
   if (data === undefined) {
     return (
@@ -70,7 +73,7 @@ const Boardlist = ({ orgId, query }: BoradListProps) => {
               authorName={board.authorName}
               createdAt={board._creationTime}
               orgId={board.orgId}
-              isFavriotes={false}
+              isFavriotes={board.isFavorite}
             />
           ))}
         </div>

@@ -1,0 +1,74 @@
+import { auth, currentUser } from "@clerk/nextjs/server";
+
+import { Liveblocks } from '@liveblocks/node'
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
+
+
+
+
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
+console.log({convex});
+
+
+
+const liveBlocks = new Liveblocks({
+    secret: "sk_dev_puu_patCNmlPDCkcVSTfqFE9K3EVkwFi-za7jp3XO5p2gFFQcRoQJiN5qjWjmrm7"
+})
+
+
+export async function POST(request: Request){
+    const authorization = await auth()
+    const user = await currentUser()
+
+    console.log("Auth info", {
+        authorization,
+        user
+    });
+    
+
+    if(!authorization || !user){
+        return new Response("Unauthorized!", {status: 403})
+    }
+
+    const { room } = await request.json()
+
+    const board = await convex.query(api.board.get, {id: room})
+
+      console.log("Board info", {
+        room,
+        board,
+        boardOrgId: board?.orgId,
+        userOrgId: authorization?.orgId
+    });
+    
+
+    if(board?.orgId !== authorization.orgId){
+        return new Response("UnAuthorized", {status: 403})
+    }
+
+    const userInfo = {
+        name: user.firstName!,
+        picture: user.imageUrl!
+    }
+
+    console.log({userInfo});
+    
+
+    const session = liveBlocks.prepareSession(
+        user.id,
+        {userInfo}
+    )
+
+    if(room){
+        session.allow(room, session.FULL_ACCESS)
+    }
+
+    const {status, body} = await session.authorize()
+    console.log({status, body}, "Allowed" );
+    
+
+    return new Response(body, {status})
+
+    
+}

@@ -1,5 +1,3 @@
-
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -38,7 +36,9 @@ export default function RootLayout({
           <Toaster />
           <ConvexClientProvider>
           <ModalProvider />
+           {/* <LiveblocksProvider publicApiKey={"pk_dev_5B_GzeVdCkI-sCVT7hzMOsz4HtLH9j50AiymMBL1OhiO3Bw87Smzv-hof5hQYbda"}> */}
             {children}
+            {/* </LiveblocksProvider> */}
             </ConvexClientProvider>
           
         </ClerkProvider>
