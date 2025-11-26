@@ -95,7 +95,7 @@ export type CanvasState =
     | {
         mode: CanvasMode.SelectionNet,
         origin: Point;
-        current?: Point; 
+        current?: Point;
     }
     | {
         mode: CanvasMode.Translating;
@@ -111,11 +111,11 @@ export type CanvasState =
     }
     | {
         mode: CanvasMode.Pressing;
-        orgin: Point;
+        origin: Point;
     }
     | {
         mode: CanvasMode.Inserting;
-        layerType: LayerType.Ellipse | LayerType.Rectangle | LayerType.Path | LayerType.Text | LayerType.Note;
+        layerType: LayerType.Ellipse | LayerType.Rectangle | LayerType.Text | LayerType.Note;
     };
 
 
@@ -129,3 +129,5 @@ export enum CanvasMode {
     Inserting,
 
 }
+
+export type Layer = RetangleLayer | EllipseLayer | PathLayer | TextLayer | NoteLayer
