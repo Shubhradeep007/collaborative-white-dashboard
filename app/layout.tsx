@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import ConvexClientProvider from "@/hooks/providers/ConvexClientProvider";
 import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/components/modals/modal-providers";
+import { GlobalLoadingProvider } from "@/components/providers/global-loading-provider";
 
 
 const geistSans = Geist({
@@ -33,16 +34,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
 
-      <body
+      <body suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
           <Toaster />
           <ConvexClientProvider>
             <ModalProvider />
-            {/* <LiveblocksProvider publicApiKey={"pk_dev_5B_GzeVdCkI-sCVT7hzMOsz4HtLH9j50AiymMBL1OhiO3Bw87Smzv-hof5hQYbda"}> */}
-            {children}
-            {/* </LiveblocksProvider> */}
+            <GlobalLoadingProvider>
+              {children}
+            </GlobalLoadingProvider>
           </ConvexClientProvider>
 
         </ClerkProvider>

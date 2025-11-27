@@ -9,9 +9,7 @@ const Dashboard = () => {
   const searchParams = useSearchParams();
   const paramsObj = Object.fromEntries(searchParams.entries());
 
-  // console.log({paramsObj});
 
-  console.log("searchParams from page:", searchParams);
 
   const { organization } = useOrganization();
   return (

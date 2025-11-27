@@ -1,12 +1,139 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-import { TextEffect } from "@/components/ui/text-effect";
-import { AnimatedGroup } from "@/components/ui/animated-group";
 import { HeroHeader } from "./header";
 import Image from "next/image";
+
+export default function HeroSection() {
+  return (
+    <>
+      <HeroHeader />
+      <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black">
+        {/* Background decoration */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 blur-3xl opacity-30">
+            <div className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700"
+              style={{
+                clipPath: 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)'
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Hero Content */}
+        <section className="relative px-6 pt-24 pb-16 sm:pt-32 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="text-center">
+              {/* Badge */}
+              <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-blue-50 dark:bg-blue-900/30 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 ring-1 ring-inset ring-blue-600/10 dark:ring-blue-400/20">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Real-time Collaboration
+              </div>
+
+              {/* Main Heading */}
+              <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl md:text-7xl lg:text-8xl">
+                Where Ideas
+                <span className="block bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  Take Shape
+                </span>
+              </h1>
+
+              {/* Description */}
+              <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-gray-300">
+                A modern, collaborative whiteboard for teams. Draw, brainstorm, and build together in real-time.
+                Perfect for remote teams, designers, and creative minds.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="mt-10 flex items-center justify-center gap-4">
+                <Button asChild size="lg" className="rounded-full px-8 text-base shadow-lg hover:shadow-xl transition-all">
+                  <Link href="/dashboard">
+                    Get Started Free
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+
+              </div>
+
+              {/* Trust indicators */}
+              <p className="mt-8 text-sm text-gray-500 dark:text-gray-400">
+                Trusted by creative teams worldwide • No credit card required
+              </p>
+            </div>
+
+            {/* Screenshot/Demo Section */}
+            <div className="mt-16 sm:mt-24">
+              <div className="relative mx-auto max-w-5xl">
+                <div className="absolute -inset-x-4 -inset-y-4 -z-10 rounded-3xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-2xl" />
+                <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-2 shadow-2xl ring-1 ring-gray-900/10 dark:ring-white/10">
+                  <Image
+                    src="/home2.jpg"
+                    alt="Sparky Board Interface"
+                    width={2700}
+                    height={1440}
+                    className="rounded-xl w-full h-auto"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="relative px-6 py-24 sm:py-32 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {/* Feature 1 */}
+              <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-lg ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500 text-white">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Real-time Sync</h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  See changes instantly as your team collaborates. No delays, no conflicts.
+                </p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-lg ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500 text-white">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Team Collaboration</h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  Invite unlimited team members. Work together seamlessly from anywhere.
+                </p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-lg ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-500 text-white">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Powerful Tools</h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  Draw, write, add shapes, and more with our intuitive toolset.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}
+
 
 
 const transitionVariants = {
@@ -29,273 +156,4 @@ const transitionVariants = {
   },
 };
 
-export default function HeroSection() {
-  return (
-    <>
-      <HeroHeader />
-      <main className="overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block"
-        >
-          <div className="w-140 h-320 -translate-y-87.5 absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,hsla(0,0%,85%,.08)_0,hsla(0,0%,55%,.02)_50%,hsla(0,0%,45%,0)_80%)]" />
-          <div className="h-320 absolute left-0 top-0 w-60 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.06)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)] [translate:5%_-50%]" />
-          <div className="h-320 -translate-y-87.5 absolute left-0 top-0 w-60 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
-        </div>
-        <section>
-          <div className="relative pt-24 md:pt-36">
-            <AnimatedGroup
-              variants={{
-                container: {
-                  visible: {
-                    transition: {
-                      delayChildren: 1,
-                    },
-                  },
-                },
-                item: {
-                  hidden: {
-                    opacity: 0,
-                    y: 20,
-                  },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: {
-                      type: "spring",
-                      bounce: 0.3,
-                      duration: 2,
-                    },
-                  },
-                },
-              }}
-              className="mask-b-from-35% mask-b-to-90% absolute inset-0 top-56 -z-20 lg:top-32"
-            >
-              <Image
-                src="/background.jpg"
-                alt="background"
-                className="hidden size-full dark:block"
-                width={3276}
-                height={4095}
-              />
-            </AnimatedGroup>
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--color-background)_75%)]"
-            />
 
-            <div className="mx-auto max-w-7xl px-6">
-              <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
-                {/* <AnimatedGroup variants={transitionVariants}>
-                  <Link
-                    href="#link"
-                    className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-zinc-950/5 transition-colors duration-300 dark:border-t-white/5 dark:shadow-zinc-950"
-                  >
-                    <span className="text-foreground text-sm">
-                      Introducing Support for AI Models
-                    </span>
-                    <span className="dark:border-background block h-4 w-0.5 border-l bg-white dark:bg-zinc-700"></span>
-
-                    <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
-                      <div className="flex w-12 -translate-x-1/2 duration-500 ease-in-out group-hover:translate-x-0">
-                        <span className="flex size-6">
-                          <ArrowRight className="m-auto size-3" />
-                        </span>
-                        <span className="flex size-6">
-                          <ArrowRight className="m-auto size-3" />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </AnimatedGroup> */}
-
-                <TextEffect
-                  preset="fade-in-blur"
-                  speedSegment={0.3}
-                  as="h1"
-                  className="mx-auto mt-8 max-w-4xl text-balance text-5xl max-md:font-semibold md:text-7xl lg:mt-16 xl:text-[5.25rem]"
-                >
-                 Where Ideas Take Shape
-                </TextEffect>
-                <TextEffect
-                  per="line"
-                  preset="fade-in-blur"
-                  speedSegment={0.3}
-                  delay={0.5}
-                  as="p"
-                  className="mx-auto mt-8 max-w-2xl text-balance text-lg"
-                >
-                  A modern, customizable workspace for mapping concepts, sharing thoughts, and building together.
-                </TextEffect>
-
-                <AnimatedGroup
-                  variants={{
-                    container: {
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.05,
-                          delayChildren: 0.75,
-                        },
-                      },
-                    },
-                    ...transitionVariants,
-                  }}
-                  className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row"
-                >
-                  <div
-                    key={1}
-                    className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5"
-                  >
-                    <Button
-                      asChild
-                      size="lg"
-                      className="rounded-xl px-5 text-base"
-                    >
-                      <Link href="#link">
-                        <span className="text-nowrap">Start Building</span>
-                      </Link>
-                    </Button>
-                  </div>
-                  <Button
-                    key={2}
-                    asChild
-                    size="lg"
-                    variant="ghost"
-                    className="h-10.5 rounded-xl px-5"
-                  >
-                    <Link href="#link">
-                      <span className="text-nowrap">Request a demo</span>
-                    </Link>
-                  </Button>
-                </AnimatedGroup>
-              </div>
-            </div>
-
-            <AnimatedGroup
-              variants={{
-                container: {
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.05,
-                      delayChildren: 0.75,
-                    },
-                  },
-                },
-                ...transitionVariants,
-              }}
-            >
-              <div className="mask-b-from-55% relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
-                <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
-                  <Image
-                    className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
-                    src="/home2.jpg"
-                    alt="app screen"
-                    width="2700"
-                    height="1440"
-                  />
-                  <Image
-                    className="z-2 border-border/25 aspect-15/8 relative rounded-2xl border dark:hidden"
-                    src="/home.jpg"
-                    alt="app screen"
-                    width="2700"
-                    height="1440"
-                  />
-                </div>
-              </div>
-            </AnimatedGroup>
-          </div>
-        </section>
-        <section className="bg-background pb-16 pt-16 md:pb-32">
-          <div className="group relative m-auto max-w-5xl px-6">
-            <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
-              <Link
-                href="/"
-                className="block text-sm duration-150 hover:opacity-75"
-              >
-                <span> Meet Our Customers</span>
-
-                <ChevronRight className="ml-1 inline-block size-3" />
-              </Link>
-            </div>
-            <div className="group-hover:blur-xs mx-auto mt-12 grid max-w-2xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
-              <div className="flex">
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/nvidia.svg"
-                  alt="Nvidia Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-
-              <div className="flex">
-                <img
-                  className="mx-auto h-4 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/column.svg"
-                  alt="Column Logo"
-                  height="16"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-4 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/github.svg"
-                  alt="GitHub Logo"
-                  height="16"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/nike.svg"
-                  alt="Nike Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg"
-                  alt="Lemon Squeezy Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-4 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/laravel.svg"
-                  alt="Laravel Logo"
-                  height="16"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-7 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/lilly.svg"
-                  alt="Lilly Logo"
-                  height="28"
-                  width="auto"
-                />
-              </div>
-
-              <div className="flex">
-                <img
-                  className="mx-auto h-6 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/openai.svg"
-                  alt="OpenAI Logo"
-                  height="24"
-                  width="auto"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </>
-  );
-}

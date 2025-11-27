@@ -56,26 +56,26 @@ export const Info = ({ boardId }: InfoProps) => {
       </Hint>
       <TabSaprator />
       <Hint lebel="Rename board" side="bottom" sideOffset={10}>
-      <Button
-        variant="board"
-        className="text-base font-normal px-2 "
-        onClick={() => onOpen(data._id, data.title)}
-      >
-        {data.title}
-      </Button>
+        <Button
+          variant="board"
+          className="text-base font-normal px-2 "
+          onClick={() => onOpen(data._id, data.title)}
+        >
+          {data.title}
+        </Button>
       </Hint>
       <TabSaprator />
       <Actions
-      id={data._id}
-      title={data.title} 
-      side="bottom"
-      sideOffset={10} 
+        id={data._id}
+        title={data.title}
+        side="bottom"
+        sideOffset={10}
       >
         <div>
           <Hint lebel="Main Menu" side="bottom" sideOffset={10}>
-            <Button variant="board" size="icon">
-              <Menu/>
-            </Button>
+            <div className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-white h-12 w-12">
+              <Menu />
+            </div>
           </Hint>
         </div>
       </Actions>

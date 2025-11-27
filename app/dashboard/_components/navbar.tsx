@@ -7,7 +7,7 @@ import {
 } from "@clerk/nextjs";
 import SearchInput from "./search-input";
 import InviteButton from "./invite-button";
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+
 
 const Navbar = () => {
 
@@ -45,7 +45,6 @@ const Navbar = () => {
           }}
         />
       </div>
-      <AnimatedThemeToggler />
       {organization && (
 
         <InviteButton />

@@ -9,6 +9,14 @@ import EmptySeach from "./empty-search";
 
 import NewBoardButton from "./new-board-button";
 import { BoardCard } from "./board-card";
+import {  Poppins } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+
+const Font = Poppins({
+    subsets: ['latin'],
+    weight: ['600']
+})
 
 interface BoradListProps {
   orgId: string;
@@ -26,8 +34,8 @@ const Boardlist = ({ orgId, query }: BoradListProps) => {
 
   if (data === undefined) {
     return (
-      <div>
-        <h2 className="text-3xl ">
+      <div className="bg-gray-100 h-full p-5 rounded shadow-md">
+        <h2 className={cn("text-3xl ", Font.className)}>
           {query.favorites ? "Favorite Boards" : "Team Boards"}
         </h2>
 
@@ -56,8 +64,9 @@ const Boardlist = ({ orgId, query }: BoradListProps) => {
 
   return (
     <>
-      <div>
-        <h2 className="text-3xl ">
+      <div className="bg-gray-100 h-full p-5 rounded shadow-md">
+        
+        <h2 className={cn("text-3xl ", Font.className)}>
           {query.favorites ? "Favorite Boards" : "Team Boards"}
         </h2>
 

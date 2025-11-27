@@ -16,12 +16,11 @@ const BoardIdPage = ({ params }: BoardIdProps) => {
   const searchParams = useSearchParams();
   const query = Object.fromEntries(searchParams.entries());
 
-  console.log("Dynamic Board ID:", boardId);
-  console.log("Search Params:", query);
+
 
   return (
     <Room roomId={boardId} fallback={<Loading />}>
-      <Canvas boardId={boardId}  />
+      <Canvas boardId={boardId} />
     </Room>
   );
 };

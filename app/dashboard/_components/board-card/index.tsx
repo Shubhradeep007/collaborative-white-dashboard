@@ -109,7 +109,7 @@ export const BoardCard = ({
 
 BoardCard.Skeleton = function boardCardSkeleton() {
     return (
-        <div className="aspect-[100/127] rounded-lg overflow-hidden">
+        <div className="bg-black rounded-lg overflow-hidden">
             <Skeleton className="w-full h-full" />
         </div>
 
