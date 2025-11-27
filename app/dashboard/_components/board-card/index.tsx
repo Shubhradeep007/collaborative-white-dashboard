@@ -36,13 +36,13 @@ export const BoardCard = ({
 }: BoardCardProps) => {
 
     const { userId } = useAuth()
-    
+
     const {
         mutate: onFavorite,
         pending: pendingFavorite
     } = useApiMutation(api.board.Favorite)
-    
-    
+
+
     const {
         mutate: onUnFavorite,
         pending: pendingUnFavorite
@@ -50,16 +50,16 @@ export const BoardCard = ({
 
 
     const toggleFavroite = () => {
-        if(isFavriotes){
-            onUnFavorite({id})
-            .catch(() => {
-                toast.error("Failed to unfavorite")
-            })
+        if (isFavriotes) {
+            onUnFavorite({ id })
+                .catch(() => {
+                    toast.error("Failed to unfavorite")
+                })
         } else {
-            onFavorite({id, orgId})
-             .catch(() => {
-                toast.error("Failed to favorite")
-            })
+            onFavorite({ id, orgId })
+                .catch(() => {
+                    toast.error("Failed to favorite")
+                })
         }
     }
 
@@ -80,37 +80,37 @@ export const BoardCard = ({
                     />
                     <Overlay />
                     <Actions
-                    id={id}
-                    title={title}
-                    side="right">
-                     <button className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-2 outline-none cursor-pointer">
-                       <MoreHorizontal 
-                        className="text-white opacity-75 hover:opacity-100 transition-opacity"
-                       />
-                    </button>   
-                     </Actions>
+                        id={id}
+                        title={title}
+                        side="right">
+                        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-2 outline-none cursor-pointer">
+                            <MoreHorizontal
+                                className="text-white opacity-75 hover:opacity-100 transition-opacity"
+                            />
+                        </div>
+                    </Actions>
                 </div>
-                <Footer 
-                isFavriotes={isFavriotes}
-                title={title}
-                authorLable={authorLable}
-                createdAtLabel={createdAtLabel}
-                onClick={toggleFavroite}
-                disabled={pendingFavorite || pendingUnFavorite}
+                <Footer
+                    isFavriotes={isFavriotes}
+                    title={title}
+                    authorLable={authorLable}
+                    createdAtLabel={createdAtLabel}
+                    onClick={toggleFavroite}
+                    disabled={pendingFavorite || pendingUnFavorite}
                 />
             </div>
         </Link>
 
     )
-    
+
 
 }
 
 
 BoardCard.Skeleton = function boardCardSkeleton() {
     return (
-         <div className="aspect-[100/127] rounded-lg overflow-hidden">
-                <Skeleton className="w-full h-full" />
+        <div className="aspect-[100/127] rounded-lg overflow-hidden">
+            <Skeleton className="w-full h-full" />
         </div>
 
     )

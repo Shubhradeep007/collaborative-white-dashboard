@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sparky Board: Real Time Whiteboard",
   description: "Sparky Board: Real Time Whiteboard",
+  icons: {
+    icon: '/vercel.svg',
+  },
 };
 
 export default function RootLayout({
@@ -29,18 +32,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
           <Toaster />
           <ConvexClientProvider>
-          <ModalProvider />
-           {/* <LiveblocksProvider publicApiKey={"pk_dev_5B_GzeVdCkI-sCVT7hzMOsz4HtLH9j50AiymMBL1OhiO3Bw87Smzv-hof5hQYbda"}> */}
+            <ModalProvider />
+            {/* <LiveblocksProvider publicApiKey={"pk_dev_5B_GzeVdCkI-sCVT7hzMOsz4HtLH9j50AiymMBL1OhiO3Bw87Smzv-hof5hQYbda"}> */}
             {children}
             {/* </LiveblocksProvider> */}
-            </ConvexClientProvider>
-          
+          </ConvexClientProvider>
+
         </ClerkProvider>
       </body>
     </html>

@@ -50,7 +50,7 @@ export const Info = ({ boardId }: InfoProps) => {
             />
             <span className={cn(
               "font-semibold text-xl ml-2 text-black", font.className
-            )}>SpunkBoard</span>
+            )}>Sparky Board</span>
           </Link>
         </Button>
       </Hint>
