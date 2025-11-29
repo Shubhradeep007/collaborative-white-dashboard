@@ -35,7 +35,7 @@ export const ProModal = () => {
             <DialogContent className="max-w-[340px] p-0 overflow-hidden">
                 <div className="aspect-video relative flex items-center justify-center bg-neutral-950">
                     <Image
-                        src="/pro.svg"
+                        src="/upgrade.png"
                         alt="Pro"
                         fill
                         className="object-cover"
