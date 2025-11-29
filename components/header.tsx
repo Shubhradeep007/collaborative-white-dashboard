@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Authenticated, Unauthenticated } from "convex/react";
@@ -67,7 +68,8 @@ export const HeroHeader = () => {
                 aria-label="home"
                 className="flex items-center space-x-2"
               >
-                <Logo />
+                <Image src="/logo.png" alt="Logo" width={32} height={32} />
+                <span className="text-xl font-bold">Sparky</span>
               </Link>
 
               <button
