@@ -186,6 +186,78 @@ export const deleteOrganizations = mutation({
     },
 });
 
+export const deleteOrganizationInternal = internalMutation({
+    args: { orgId: v.string() },
+    handler: async (ctx, args) => {
+        // Delete all boards
+        const boards = await ctx.db
+            .query("boards")
+            .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
+            .collect();
+
+        for (const board of boards) {
+            await ctx.db.delete(board._id);
+        }
+
+        // Delete subscription
+        const subscriptions = await ctx.db
+            .query("orgSubscription")
+            .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
+            .collect();
+
+        for (const subscription of subscriptions) {
+            await ctx.db.delete(subscription._id);
+        }
+
+        // Delete organization
+        const org = await ctx.db
+            .query("organizations")
+            .withIndex("by_org_id", (q) => q.eq("orgId", args.orgId))
+            .unique();
+
+        if (org) {
+            await ctx.db.delete(org._id);
+        }
+    },
+});
+
+export const deleteOrganizationsInternal = internalMutation({
+    args: { orgIds: v.array(v.string()) },
+    handler: async (ctx, args) => {
+        for (const orgId of args.orgIds) {
+            // Delete all boards
+            const boards = await ctx.db
+                .query("boards")
+                .withIndex("by_org", (q) => q.eq("orgId", orgId))
+                .collect();
+
+            for (const board of boards) {
+                await ctx.db.delete(board._id);
+            }
+
+            // Delete subscription
+            const subscriptions = await ctx.db
+                .query("orgSubscription")
+                .withIndex("by_org", (q) => q.eq("orgId", orgId))
+                .collect();
+
+            for (const subscription of subscriptions) {
+                await ctx.db.delete(subscription._id);
+            }
+
+            // Delete organization
+            const org = await ctx.db
+                .query("organizations")
+                .withIndex("by_org_id", (q) => q.eq("orgId", orgId))
+                .unique();
+
+            if (org) {
+                await ctx.db.delete(org._id);
+            }
+        }
+    },
+});
+
 export const getStats = query({
     args: {},
     handler: async (ctx) => {

@@ -87,7 +87,7 @@ export async function POST(req: Request) {
         }
 
         if ((event.type as string) === "organization.created") {
-            const { id, name, image_url } = event.data.object as { id: string; name: string; image_url: string };
+            const { id, name, image_url } = event.data.object as unknown as { id: string; name: string; image_url: string };
 
             await convex.mutation(api.organizations.create, {
                 orgId: id,
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
         }
 
         if ((event.type as string) === "organization.updated") {
-            const { id, name, image_url } = event.data.object as { id: string; name: string; image_url: string };
+            const { id, name, image_url } = event.data.object as unknown as { id: string; name: string; image_url: string };
 
             await convex.mutation(api.organizations.update, {
                 orgId: id,
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
         }
 
         if ((event.type as string) === "organization.deleted") {
-            const { id } = event.data.object as { id: string };
+            const { id } = event.data.object as unknown as { id: string };
 
             await convex.mutation(api.organizations.deleteOrg, {
                 orgId: id,
