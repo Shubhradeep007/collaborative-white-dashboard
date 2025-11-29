@@ -159,7 +159,6 @@ export const UnFavorite = mutation({
       .query("usesFavroites")
       .withIndex("by_user_board", (q) =>
         q.eq("userId", userId).eq("boardId", board._id)
-        // todo: check if orgID needed
       )
       .unique();
 

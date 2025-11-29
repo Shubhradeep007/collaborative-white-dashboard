@@ -27,27 +27,22 @@ export async function POST(req: Request) {
         return new NextResponse(`Webhook Error: ${error}`, { status: 400 });
     }
 
-    console.log(`[WEBHOOK_RECEIVED] Event type: ${event.type}`);
+
 
     try {
         if (event.type === "checkout.session.completed") {
             const session = event.data.object as Stripe.Checkout.Session;
-            console.log("[WEBHOOK] Processing checkout.session.completed");
             const subscription = await stripe.subscriptions.retrieve(
                 session.subscription as string
             ) as any;
-
             if (!session?.metadata?.orgId) {
                 return new NextResponse("Org ID is required", { status: 400 });
             }
-
-            console.log("[WEBHOOK] Subscription retrieved:", JSON.stringify(subscription, null, 2));
 
             const periodEnd = subscription.current_period_end
                 ? subscription.current_period_end * 1000
                 : Date.now() + 86400000; // Fallback to 1 day if missing
 
-            console.log("[WEBHOOK] Creating subscription in Convex for org:", session.metadata.orgId);
             await convex.mutation(api.stripe.create, {
                 orgId: session.metadata.orgId,
                 stripeCustomerId: subscription.customer as string,
@@ -55,7 +50,6 @@ export async function POST(req: Request) {
                 stripePriceId: subscription.items.data[0].price.id,
                 stripeCurrentPeriodEnd: periodEnd,
             });
-            console.log("[WEBHOOK] Subscription created successfully");
         }
 
         if (event.type === "invoice.payment_succeeded") {

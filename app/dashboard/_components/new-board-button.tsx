@@ -26,7 +26,6 @@ const NewBoardButton = ({ orgId, disable }: NewBoardButtonProps) => {
       .then((id) => {
         toast.success("Board created!");
         router.push(`board/${id}`)
-        // todo redirected board/{id}
       })
       .catch((error) => {
         toast.error("Failed to create board");

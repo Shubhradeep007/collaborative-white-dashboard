@@ -91,7 +91,7 @@ const OrgSidebar = () => {
           className='font-normal justify-start px-2 w-full'>
           <Link href="/dashboard">
             <LayoutDashboard className='h-4 w-4 mr-2' />
-            Team Borards
+            Team Boards
           </Link>
         </Button>
 
@@ -101,7 +101,7 @@ const OrgSidebar = () => {
             query: { favorites: true }
           }}>
             <Star className='h-4 w-4 mr-2' />
-            Favorite Borards
+            Favorite Boards
           </Link>
         </Button>
       </div>
@@ -118,11 +118,12 @@ const OrgSidebar = () => {
           {isPro ? "Pro Member" : "Upgrade to Pro"}
         </Button>
 
-        {/* TODO: Add Pro badge here when subscription is active */}
-        {/* <div className="flex items-center gap-x-2 px-2 py-1">
-          <div className="h-2 w-2 rounded-full bg-green-500" />
-          <span className="text-xs text-muted-foreground">Pro Member</span>
-        </div> */}
+        {isPro && (
+          <div className="flex items-center gap-x-2 px-2 py-1">
+            <div className="h-2 w-2 rounded-full bg-green-500" />
+            <span className="text-xs text-muted-foreground">Active Subscription</span>
+          </div>
+        )}
       </div>
     </div>
   );

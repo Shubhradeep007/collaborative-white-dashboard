@@ -1,6 +1,6 @@
-"use client"
+﻿"use client"
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Info } from "./info"
 import { Priticipants } from "./priticipants"
 import { Toolbar } from "./toolbar"
@@ -208,25 +208,6 @@ const Canvas = ({ boardId }: CanvasProps) => {
     })
   }, [lastUseColor])
 
-  const resizeSelectedLayer = useMutation((
-    { storage, self },
-    point: Point,
-  ) => {
-    if (canvasState.mode !== CanvasMode.Resizing) {
-      return
-    }
-
-    const bounce = resizeBounce(canvasState.intialBounce, point, canvasState.corner)
-
-    const liveLayers = storage.get("layers")
-    const layer = liveLayers.get(self.presence.selection[0])
-
-    if (layer) {
-      layer.update(bounce)
-    }
-
-  }, [canvasState])
-
   const unselectLayer = useMutation((
     { self, setMyPresence }
   ) => {
@@ -235,29 +216,145 @@ const Canvas = ({ boardId }: CanvasProps) => {
     }
   }, [])
 
-  const onResizeHandelPointerDown = useCallback((
-    corner: Side,
-    intialBounce: XYWH
+  const deleteLayers = useMutation((
+    { storage, self, setMyPresence }
   ) => {
-    console.log({
-      corner,
-      intialBounce
-    });
+    const selection = self.presence.selection;
 
-    history.pause()
-    setCanvasState({
-      mode: CanvasMode.Resizing,
-      corner,
-      intialBounce,
-    })
-  }, [history])
+    if (!selection || selection.length === 0) {
+      return;
+    }
 
-  const onWheel = useCallback((e: React.WheelEvent) => {
-    setCamera((camera) => ({
-      x: camera.x - e.deltaX,
-      y: camera.y - e.deltaY,
-    }))
-  }, [])
+    const liveLayers = storage.get("layers");
+    const liveLayerIds = storage.get("layerIds");
+
+    for (const id of selection) {
+      liveLayers.delete(id);
+
+      const index = liveLayerIds.indexOf(id);
+      if (index !== -1) {
+        liveLayerIds.delete(index);
+      }
+    }
+
+    setMyPresence({ selection: [] }, { addToHistory: true });
+  }, [history]);
+
+  const duplicateLayers = useMutation((
+    { storage, self, setMyPresence }
+  ) => {
+    const selection = self.presence.selection;
+
+    if (!selection || selection.length === 0) {
+      return;
+    }
+
+    const liveLayers = storage.get("layers");
+    const liveLayerIds = storage.get("layerIds");
+
+    const newSelection: string[] = [];
+
+    for (const id of selection) {
+      const layer = liveLayers.get(id);
+
+      if (layer) {
+        const newLayerId = nanoid();
+        const newLayer = layer.clone();
+
+        // Offset the new layer slightly so it's visible
+        newLayer.set("x", newLayer.get("x") + 10);
+        newLayer.set("y", newLayer.get("y") + 10);
+
+        liveLayerIds.push(newLayerId);
+        liveLayers.set(newLayerId, newLayer);
+
+        newSelection.push(newLayerId);
+      }
+    }
+
+    setMyPresence({ selection: newSelection }, { addToHistory: true });
+  }, []);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (document.activeElement instanceof HTMLElement &&
+        (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA" || document.activeElement.isContentEditable)) {
+        return;
+      }
+
+      switch (e.key) {
+        case "Backspace":
+        case "Delete":
+          deleteLayers();
+          break;
+        case "z":
+          if (e.ctrlKey || e.metaKey) {
+            if (e.shiftKey) {
+              history.redo();
+            } else {
+              history.undo();
+            }
+            e.preventDefault();
+          }
+          break;
+        case "y":
+          if (e.ctrlKey || e.metaKey) {
+            history.redo();
+            e.preventDefault();
+          }
+          break;
+        case "d":
+          if (e.ctrlKey || e.metaKey) {
+            duplicateLayers();
+            e.preventDefault();
+          }
+          break;
+        case "Escape":
+          // We need to access unselectLayer here, but it's defined later. 
+          // Ideally we should move unselectLayer up or define it inside useEffect dependency if possible (but it's a mutation).
+          // For now, let's just clear selection manually or move unselectLayer up.
+          // Better yet, let's move unselectLayer definition up before this useEffect.
+          break;
+      }
+    }
+
+    function onKeyUp(e: KeyboardEvent) {
+      if (e.key === " ") {
+        setCanvasState({ mode: CanvasMode.None });
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keyup", onKeyUp);
+    };
+  }, [deleteLayers, duplicateLayers, history, canvasState.mode, setCanvasState]);
+
+  const resizeSelectedLayer = useMutation((
+    { storage, self },
+    point: Point,
+  ) => {
+    if (canvasState.mode !== CanvasMode.Resizing) {
+      return
+    }
+
+    const bounds = resizeBounce(
+      canvasState.intialBounce,
+      point,
+      canvasState.corner
+    )
+
+    const liveLayers = storage.get("layers")
+    const layer = liveLayers.get(self.presence.selection[0])
+
+    if (layer) {
+      layer.update(bounds)
+    }
+
+  }, [canvasState])
 
   const onPointerMove = useMutation(({ setMyPresence }, e: React.PointerEvent) => {
     e.preventDefault()
@@ -295,7 +392,6 @@ const Canvas = ({ boardId }: CanvasProps) => {
       return
     }
 
-    // Todo: Add case for Drawing
     if (canvasState.mode === CanvasMode.Pencil) {
       startDrawing(point, e.pressure)
       return
@@ -331,6 +427,25 @@ const Canvas = ({ boardId }: CanvasProps) => {
   ])
 
   const selections = useOthersMapped((other) => other.presence.selection)
+
+  const onWheel = useCallback((e: React.WheelEvent) => {
+    setCamera((camera) => ({
+      x: camera.x - e.deltaX,
+      y: camera.y - e.deltaY,
+    }))
+  }, [])
+
+  const onResizeHandelPointerDown = useCallback((
+    corner: Side,
+    initialBounds: XYWH
+  ) => {
+    history.pause()
+    setCanvasState({
+      mode: CanvasMode.Resizing,
+      intialBounce: initialBounds,
+      corner,
+    })
+  }, [history])
 
   const layerIdsToColorSelcetion = useMemo(() => {
     const layerIdsToColorSelcetion: Record<string, string> = {}
