@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Sidebar from "./_components/sidebar";
 import OrgSidebar from "./_components/org-sidebar";
 import Navbar from "./_components/navbar";
@@ -10,10 +10,14 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 
       <div className="flex flex-1 pl-[60px]">
         <div className="flex h-full w-full">
-          <OrgSidebar />
+          <Suspense>
+            <OrgSidebar />
+          </Suspense>
 
           <div className="flex-1 h-full overflow-auto">
-            <Navbar />
+            <Suspense>
+              <Navbar />
+            </Suspense>
             {children}
           </div>
         </div>

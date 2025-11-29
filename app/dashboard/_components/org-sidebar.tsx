@@ -7,8 +7,13 @@ import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { OrganizationSwitcher } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Star } from 'lucide-react';
+import { LayoutDashboard, Star, Banknote } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useProModal } from '@/store/use-pro-modal';
+import { useOrganization } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useEffect, useState } from 'react';
 
 
 const font = Poppins({ subsets: ['latin'], weight: ["600"] });
@@ -18,6 +23,24 @@ const OrgSidebar = () => {
 
   const searchParams = useSearchParams();
   const favorites = searchParams.get('favorites');
+  const { onOpen } = useProModal();
+
+  const { organization } = useOrganization();
+  const subscription = useQuery(api.subscriptions.get,
+    organization ? { orgId: organization.id } : "skip"
+  );
+
+  const isPro = !!subscription?.isValid;
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
 
   return (
@@ -37,7 +60,7 @@ const OrgSidebar = () => {
         </div>
       </Link>
 
-      <OrganizationSwitcher 
+      <OrganizationSwitcher
         hidePersonal
         appearance={{
           elements: {
@@ -62,13 +85,13 @@ const OrgSidebar = () => {
 
 
       <div className='space-x-3 mt-3 w-full'>
-        <Button asChild 
-        size="lg"
-        variant={favorites ? "ghost" : "secondary"}
-        className='font-normal justify-start px-2 w-full'>
+        <Button asChild
+          size="lg"
+          variant={favorites ? "ghost" : "secondary"}
+          className='font-normal justify-start px-2 w-full'>
           <Link href="/dashboard">
-          <LayoutDashboard className='h-4 w-4 mr-2'/>
-          Team Borards
+            <LayoutDashboard className='h-4 w-4 mr-2' />
+            Team Borards
           </Link>
         </Button>
 
@@ -77,10 +100,29 @@ const OrgSidebar = () => {
             pathname: "/dashboard",
             query: { favorites: true }
           }}>
-          <Star className='h-4 w-4 mr-2'/>
-          Favorite Borards
+            <Star className='h-4 w-4 mr-2' />
+            Favorite Borards
           </Link>
         </Button>
+      </div>
+
+      <div className="space-y-1 w-full mt-auto mb-4">
+        <Button
+          onClick={isPro ? undefined : onOpen}
+          disabled={isPro}
+          size="lg"
+          className="font-normal justify-start px-2 w-full"
+          variant={isPro ? "ghost" : "ghost"}
+        >
+          <Banknote className="h-4 w-4 mr-2" />
+          {isPro ? "Pro Member" : "Upgrade to Pro"}
+        </Button>
+
+        {/* TODO: Add Pro badge here when subscription is active */}
+        {/* <div className="flex items-center gap-x-2 px-2 py-1">
+          <div className="h-2 w-2 rounded-full bg-green-500" />
+          <span className="text-xs text-muted-foreground">Pro Member</span>
+        </div> */}
       </div>
     </div>
   );

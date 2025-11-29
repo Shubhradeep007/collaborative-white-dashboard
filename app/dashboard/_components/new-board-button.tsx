@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useProModal } from "@/store/use-pro-modal";
 
 interface NewBoardButtonProps {
   orgId: string;
@@ -14,6 +15,7 @@ interface NewBoardButtonProps {
 
 const NewBoardButton = ({ orgId, disable }: NewBoardButtonProps) => {
   const { mutate, pending } = useApiMutation(api.board.create);
+  const proModal = useProModal();
   const router = useRouter()
 
   const onClick = () => {
@@ -26,7 +28,10 @@ const NewBoardButton = ({ orgId, disable }: NewBoardButtonProps) => {
         router.push(`board/${id}`)
         // todo redirected board/{id}
       })
-      .catch(() => toast.error("Failed to create board"));
+      .catch((error) => {
+        toast.error("Failed to create board");
+        proModal.onOpen();
+      });
   };
 
   return (
@@ -36,7 +41,7 @@ const NewBoardButton = ({ orgId, disable }: NewBoardButtonProps) => {
       className={cn(
         "col-span-1 aspect-[100/127] bg-blue-600 rounded-lg hover:bg-blue-800 flex flex-col items-center justify-center py-6 cursor-pointer",
         (pending || disable) &&
-          "opacity-75 hover:bg-blue-600 cursor-not-allowed"
+        "opacity-75 hover:bg-blue-600 cursor-not-allowed"
       )}
     >
       <div />

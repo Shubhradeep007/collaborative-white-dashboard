@@ -7,11 +7,13 @@ import Image from "next/image";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useProModal } from "@/store/use-pro-modal";
 
 const EmptyBoards = () => {
 
   const router = useRouter()
   const { organization } = useOrganization()
+  const proModal = useProModal();
   const { mutate, pending } = useApiMutation(api.board.create)
 
   const onClick = () => {
@@ -22,12 +24,15 @@ const EmptyBoards = () => {
       orgId: organization.id,
       title: "untitled"
     })
-    .then((id) => {
-      toast.success("Board Created")
-      router.push(`/board/${id}`)
+      .then((id) => {
+        toast.success("Board Created")
+        router.push(`/board/${id}`)
         // todo redirt to borad/id
-    })
-    .catch(() => toast.error("Failed to create board"))
+      })
+      .catch(() => {
+        toast.error("Failed to create board");
+        proModal.onOpen();
+      })
   }
 
   return (

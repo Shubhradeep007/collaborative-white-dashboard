@@ -1,0 +1,102 @@
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+import { Webhook } from "svix";
+import Stripe from "stripe";
+import { ConvexHttpClient } from "convex/browser";
+
+import { stripe } from "@/lib/stripe";
+import { api } from "@/convex/_generated/api";
+
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
+export async function POST(req: Request) {
+    const body = await req.text();
+    const headerPayload = await headers();
+    const signature = headerPayload.get("Stripe-Signature") as string;
+
+    let event: Stripe.Event;
+
+    try {
+        event = stripe.webhooks.constructEvent(
+            body,
+            signature,
+            process.env.STRIPE_WEBHOOK_SECRET!
+        );
+    } catch (error) {
+        console.error("[WEBHOOK_ERROR]", error);
+        return new NextResponse(`Webhook Error: ${error}`, { status: 400 });
+    }
+
+    console.log(`[WEBHOOK_RECEIVED] Event type: ${event.type}`);
+
+    try {
+        if (event.type === "checkout.session.completed") {
+            const session = event.data.object as Stripe.Checkout.Session;
+            console.log("[WEBHOOK] Processing checkout.session.completed");
+            const subscription = await stripe.subscriptions.retrieve(
+                session.subscription as string
+            ) as any;
+
+            if (!session?.metadata?.orgId) {
+                return new NextResponse("Org ID is required", { status: 400 });
+            }
+
+            console.log("[WEBHOOK] Subscription retrieved:", JSON.stringify(subscription, null, 2));
+
+            const periodEnd = subscription.current_period_end
+                ? subscription.current_period_end * 1000
+                : Date.now() + 86400000; // Fallback to 1 day if missing
+
+            console.log("[WEBHOOK] Creating subscription in Convex for org:", session.metadata.orgId);
+            await convex.mutation(api.stripe.create, {
+                orgId: session.metadata.orgId,
+                stripeCustomerId: subscription.customer as string,
+                stripeSubscriptionId: subscription.id,
+                stripePriceId: subscription.items.data[0].price.id,
+                stripeCurrentPeriodEnd: periodEnd,
+            });
+            console.log("[WEBHOOK] Subscription created successfully");
+        }
+
+        if (event.type === "invoice.payment_succeeded") {
+            const invoice = event.data.object as Stripe.Invoice;
+            const subscriptionId = typeof (invoice as any).subscription === 'string'
+                ? (invoice as any).subscription
+                : (invoice as any).subscription?.id;
+
+            if (!subscriptionId) {
+                return new NextResponse(null, { status: 200 });
+            }
+
+            const subscription = await stripe.subscriptions.retrieve(
+                subscriptionId as string
+            ) as any;
+
+            const periodEnd = subscription.current_period_end
+                ? subscription.current_period_end * 1000
+                : Date.now() + 86400000;
+
+            await convex.mutation(api.stripe.update, {
+                stripeSubscriptionId: subscription.id,
+                stripePriceId: subscription.items.data[0].price.id,
+                stripeCurrentPeriodEnd: periodEnd,
+            });
+        }
+
+        if (event.type === "customer.subscription.deleted") {
+            const subscription = event.data.object as Stripe.Subscription;
+
+            await convex.mutation(api.stripe.remove, {
+                stripeSubscriptionId: subscription.id,
+            });
+        }
+
+        return new NextResponse(null, { status: 200 });
+    } catch (error) {
+        console.error("[WEBHOOK_PROCESSING_ERROR]", error);
+        return new NextResponse(JSON.stringify({ error: "Webhook processing failed", details: error instanceof Error ? error.message : String(error) }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" }
+        });
+    }
+}

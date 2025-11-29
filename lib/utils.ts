@@ -8,6 +8,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function absoluteUrl(path: string) {
+  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
+}
+
 export function connectionIdToColor(connectionId: number) {
   return COLORS[connectionId % COLORS.length]
 }
@@ -98,7 +102,7 @@ export function findIntersectingLayersWithReactangle(
   return ids
 }
 
-export function getContrastingTextToColor(color: Color){
+export function getContrastingTextToColor(color: Color) {
   const luminance = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
   return luminance > 182 ? "black" : "white";
 }
@@ -107,7 +111,7 @@ export function penPointsToPathLayer(
   points: number[][],
   color: Color
 ): PathLayer {
-  if(points.length < 2){
+  if (points.length < 2) {
     throw new Error("Cann't trasnform points with less than 2 points")
   }
 
@@ -116,18 +120,18 @@ export function penPointsToPathLayer(
   let right = Number.NEGATIVE_INFINITY
   let bottom = Number.NEGATIVE_INFINITY
 
-  for(const point of points){
+  for (const point of points) {
     const [x, y] = point
-    if(left > x){
+    if (left > x) {
       left = x
     }
-    if(top > y){
+    if (top > y) {
       top = y
     }
-    if(right < x){
+    if (right < x) {
       right = x
     }
-    if(bottom < y){
+    if (bottom < y) {
       bottom = y
     }
   }
@@ -139,16 +143,16 @@ export function penPointsToPathLayer(
     width: right - left,
     height: bottom - top,
     fill: color,
-    points: points.map(([x, y, pressure])=> [x - left, y - top, pressure])
+    points: points.map(([x, y, pressure]) => [x - left, y - top, pressure])
   }
 }
 
-export function getSvgPathFromStroke(stroke: number[][],){
-  if(!stroke.length) return ""
+export function getSvgPathFromStroke(stroke: number[][],) {
+  if (!stroke.length) return ""
 
   const d = stroke.reduce(
     (acc, [x0, y0], i, arr) => {
-      const [x1, y1] = arr[(i + 1)  % arr.length]
+      const [x1, y1] = arr[(i + 1) % arr.length]
       acc.push(x0, y0, (x0 + x1) / 2, (y0 + y1) / 2)
       return acc
     },

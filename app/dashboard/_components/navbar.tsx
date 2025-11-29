@@ -7,12 +7,21 @@ import {
 } from "@clerk/nextjs";
 import SearchInput from "./search-input";
 import InviteButton from "./invite-button";
+import { useEffect, useState } from "react";
 
 
 const Navbar = () => {
 
   const { organization } = useOrganization()
+  const [isMounted, setIsMounted] = useState(false);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="flex items-center gap-x-4 p-5">

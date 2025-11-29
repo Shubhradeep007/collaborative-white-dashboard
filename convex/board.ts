@@ -17,6 +17,29 @@ export const create = mutation({
 
     const randomImage = images[Math.floor(Math.random() * images.length)];
 
+    // Check subscription status
+    const orgSubscriptions = await ctx.db
+      .query("orgSubscription")
+      .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
+      .collect();
+
+    const isPro = orgSubscriptions.some((sub) =>
+      sub.stripeCurrentPeriodEnd &&
+      sub.stripeCurrentPeriodEnd + 86_400_000 > Date.now()
+    );
+
+    // Enforce board limit for free users
+    if (!isPro) {
+      const boards = await ctx.db
+        .query("boards")
+        .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
+        .collect();
+
+      if (boards.length >= 2) {
+        throw new Error("You have reached your limit of 2 boards. Upgrade to Pro for unlimited boards!");
+      }
+    }
+
     const board = await ctx.db.insert("boards", {
       title: args.title,
       orgId: args.orgId,
@@ -40,15 +63,15 @@ export const remove = mutation({
     const userId = identity.subject
 
     const exsistingFavorite = await ctx.db
-    .query("usesFavroites")
-    .withIndex("by_user_board", (q) => 
-    q
-    .eq("userId", userId)
-    .eq("boardId", args.id)
-    )
-    .unique()
+      .query("usesFavroites")
+      .withIndex("by_user_board", (q) =>
+        q
+          .eq("userId", userId)
+          .eq("boardId", args.id)
+      )
+      .unique()
 
-    if(exsistingFavorite){
+    if (exsistingFavorite) {
       await ctx.db.delete(exsistingFavorite._id)
     }
 
@@ -136,7 +159,7 @@ export const UnFavorite = mutation({
       .query("usesFavroites")
       .withIndex("by_user_board", (q) =>
         q.eq("userId", userId).eq("boardId", board._id)
-      // todo: check if orgID needed
+        // todo: check if orgID needed
       )
       .unique();
 
