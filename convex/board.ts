@@ -79,26 +79,29 @@ export const remove = mutation({
   },
 });
 
-export const upadate = mutation({
-  args: { id: v.id("boards"), title: v.string() },
+export const update = mutation({
+  args: { id: v.id("boards"), title: v.optional(v.string()), imageUrl: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    const title = args.title.trim();
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Unauthorized!");
     }
 
-    if (!title) {
+    const title = args.title ? args.title.trim() : undefined;
+
+    if (args.title !== undefined && !title) {
       throw new Error("Title is Requried!");
     }
 
-    if (title.length > 60) {
+    if (title && title.length > 60) {
       throw new Error("Title can not be more then 60 character");
     }
 
-    const board = await ctx.db.patch(args.id, {
-      title: args.title,
-    });
+    const patchData: any = {};
+    if (title) patchData.title = title;
+    if (args.imageUrl) patchData.imageUrl = args.imageUrl;
+
+    const board = await ctx.db.patch(args.id, patchData);
 
     return board;
   },

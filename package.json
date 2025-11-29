@@ -24,6 +24,8 @@
     "convex": "^1.29.3",
     "convex-helpers": "^0.1.105",
     "date-fns": "^4.1.0",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^3.0.4",
     "lucide-react": "^0.554.0",
     "motion": "^12.23.24",
     "nanoid": "^5.1.6",

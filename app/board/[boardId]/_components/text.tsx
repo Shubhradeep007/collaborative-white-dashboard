@@ -55,6 +55,7 @@ export const Text = ({ id, layer, onPointerDown, selectionColor }: TextProps) =>
                 onPointerDown={(e) => onPointerDown(e, id)}
                 style={{
                     outline: selectionColor ? `1px solid ${selectionColor}` : "none",
+                    overflow: "visible"
                 }}
             >
                 <ContentEditable

@@ -19,7 +19,7 @@ import { useApiMutation } from "@/hooks/use-api-mutation";
 
 const RenameModal = () => {
 
-    const { mutate, pending } = useApiMutation(api.board.upadate)
+    const { mutate, pending } = useApiMutation(api.board.update)
 
     const { initialValues, isOpen, onClose } = useRenameModel();
 
@@ -38,13 +38,13 @@ const RenameModal = () => {
             id: initialValues.id,
             title
         })
-        .then(() => {
-            toast.success("Board renamed")
-            onClose()
-        })
-        .catch(() => {
-            toast.error("Failed to rename board")
-        })
+            .then(() => {
+                toast.success("Board renamed")
+                onClose()
+            })
+            .catch(() => {
+                toast.error("Failed to rename board")
+            })
     }
 
     return (

@@ -11,7 +11,17 @@ import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/Hint";
 import { useRenameModel } from "@/store/use-rename-modal";
 import Actions from "@/components/actions";
-import { Menu } from "lucide-react";
+import { Download, Menu } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toPng, toJpeg } from "html-to-image";
+import { jsPDF } from "jspdf";
+import { toast } from "sonner";
+
 interface InfoProps {
   boardId: string;
 }
@@ -34,6 +44,71 @@ export const Info = ({ boardId }: InfoProps) => {
   const { onOpen } = useRenameModel()
 
   const data = useQuery(api.board.get, { id: boardId as Id<"boards"> })
+
+  const onExport = async (type: 'png' | 'jpeg' | 'pdf') => {
+    const element = document.getElementById('canvas-svg');
+    if (!element) return;
+
+    try {
+      const toastId = toast.loading("Exporting...");
+      let dataUrl = '';
+
+      // Fetch Google Fonts CSS for Kalam to ensure it's embedded in the export
+      let fontEmbedCSS = '';
+      try {
+        const response = await fetch('https://fonts.googleapis.com/css2?family=Kalam:wght@400&display=swap');
+        if (response.ok) {
+          fontEmbedCSS = await response.text();
+        }
+      } catch (e) {
+        console.warn("Failed to fetch font CSS", e);
+      }
+
+      const options = {
+        backgroundColor: '#F5F5F5',
+        pixelRatio: 2,
+        fontEmbedCSS,
+        style: {
+          overflow: 'hidden',
+        },
+        filter: (node: HTMLElement) => {
+          const exclusionClasses = ['exclude-from-export'];
+          return !exclusionClasses.some((classname) => node.classList?.contains(classname));
+        }
+      }
+
+      if (type === 'png') {
+        dataUrl = await toPng(element, options);
+        const link = document.createElement('a');
+        link.download = `board-${data?.title || 'untitled'}.png`;
+        link.href = dataUrl;
+        link.click();
+      } else if (type === 'jpeg') {
+        dataUrl = await toJpeg(element, { ...options, quality: 0.95 });
+        const link = document.createElement('a');
+        link.download = `board-${data?.title || 'untitled'}.jpeg`;
+        link.href = dataUrl;
+        link.click();
+      } else if (type === 'pdf') {
+        dataUrl = await toPng(element, options);
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'px',
+        });
+        const imgProps = pdf.getImageProperties(dataUrl);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`board-${data?.title || 'untitled'}.pdf`);
+      }
+      toast.dismiss(toastId);
+      toast.success("Exported successfully!");
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to export");
+      console.error(error);
+    }
+  }
 
   if (!data) return Info.Skeleton()
 
@@ -79,6 +154,29 @@ export const Info = ({ boardId }: InfoProps) => {
           </Hint>
         </div>
       </Actions>
+      <TabSaprator />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div>
+            <Hint lebel="Export" side="bottom" sideOffset={10}>
+              <Button size="icon" variant="board">
+                <Download />
+              </Button>
+            </Hint>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" sideOffset={10}>
+          <DropdownMenuItem onClick={() => onExport('png')} className="cursor-pointer">
+            Export as PNG
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onExport('jpeg')} className="cursor-pointer">
+            Export as JPEG
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onExport('pdf')} className="cursor-pointer">
+            Export as PDF
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

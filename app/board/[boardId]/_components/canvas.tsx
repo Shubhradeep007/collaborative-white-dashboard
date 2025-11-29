@@ -15,6 +15,10 @@ import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTool } from "./selection-tool";
 import { Path } from "./path";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { api } from "@/convex/_generated/api";
+import { toPng } from "html-to-image";
+import { Id } from "@/convex/_generated/dataModel";
 
 
 
@@ -483,6 +487,28 @@ const Canvas = ({ boardId }: CanvasProps) => {
 
   }, [setCanvasState, camera, history, canvasState.mode])
 
+  const { mutate: updateBoard } = useApiMutation(api.board.update);
+
+  useEffect(() => {
+    const saveThumbnail = setTimeout(async () => {
+      const element = document.getElementById('canvas-svg');
+      if (!element) return;
+
+      try {
+        const dataUrl = await toPng(element, {
+          quality: 0.5,
+          pixelRatio: 0.2, // Scale down for thumbnail
+          backgroundColor: '#fff'
+        });
+        updateBoard({ id: boardId as Id<"boards">, imageUrl: dataUrl })
+      } catch (error) {
+        console.error("Failed to generate thumbnail", error);
+      }
+    }, 5000);
+
+    return () => clearTimeout(saveThumbnail);
+  }, [history, layerIds, updateBoard, boardId]);
+
   return (
     <>
       <main className="h-full w-full reletive bg-neutral-100 touch-none">
@@ -504,6 +530,7 @@ const Canvas = ({ boardId }: CanvasProps) => {
 
         <svg
           className="h-[100vh] w-[100vw]"
+          id="canvas-svg"
           onWheel={onWheel}
           onPointerMove={onPointerMove}
           onPointerLeave={onPointerLeave}
@@ -525,19 +552,21 @@ const Canvas = ({ boardId }: CanvasProps) => {
               />
             ))}
 
-            <SelectionBox
-              onResizeHandelPointerDown={onResizeHandelPointerDown}
-            />
-            {canvasState.mode === CanvasMode.SelectionNet && canvasState.current != null && (
-              <rect
-                className="fill-blue-500/5 stroke-blue-500 stroke-1"
-                x={Math.min(canvasState.origin.x, canvasState.current.x)}
-                y={Math.min(canvasState.origin.y, canvasState.current.y)}
-                width={Math.abs(canvasState.origin.x - canvasState.current.x)}
-                height={Math.abs(canvasState.origin.y - canvasState.current.y)}
+            <g className="exclude-from-export">
+              <SelectionBox
+                onResizeHandelPointerDown={onResizeHandelPointerDown}
               />
-            )}
-            <CursorPresence />
+              {canvasState.mode === CanvasMode.SelectionNet && canvasState.current != null && (
+                <rect
+                  className="fill-blue-500/5 stroke-blue-500 stroke-1"
+                  x={Math.min(canvasState.origin.x, canvasState.current.x)}
+                  y={Math.min(canvasState.origin.y, canvasState.current.y)}
+                  width={Math.abs(canvasState.origin.x - canvasState.current.x)}
+                  height={Math.abs(canvasState.origin.y - canvasState.current.y)}
+                />
+              )}
+              <CursorPresence />
+            </g>
             {pencilDraft != null && pencilDraft.length > 0 && (
               <Path
                 x={0}
