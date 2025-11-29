@@ -16,12 +16,7 @@ export const checkSubscriptionExpiry = internalMutation({
                 sub.stripeCurrentPeriodEnd > now &&
                 sub.stripeCurrentPeriodEnd < threeDaysFromNow
             ) {
-                // TODO: Send email notification
-                console.log(
-                    `Subscription for org ${sub.orgId} is expiring soon (on ${new Date(
-                        sub.stripeCurrentPeriodEnd
-                    ).toISOString()})`
-                );
+                // Email notification logic would go here
             }
         }
     },

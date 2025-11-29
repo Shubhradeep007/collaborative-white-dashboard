@@ -15,6 +15,16 @@ export const create = mutation({
       throw new Error("Unauthorized!");
     }
 
+    // Check if user is banned
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (user?.role === "banned") {
+      throw new Error("Your account has been suspended.");
+    }
+
     const randomImage = images[Math.floor(Math.random() * images.length)];
 
     // Check subscription status

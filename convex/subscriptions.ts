@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { query } from "./_generated/server";
 
 export const get = query({
-    args: { orgId: v.string() },
+    args: { orgId: v.optional(v.string()) }, // Made optional to not break existing calls immediately, but logic changes
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
 
@@ -10,29 +10,32 @@ export const get = query({
             return null;
         }
 
-        const orgSubscriptions = await ctx.db
-            .query("orgSubscription")
-            .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
-            .collect();
+        const userSubscription = await ctx.db
+            .query("userSubscription")
+            .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+            .unique();
 
-        if (orgSubscriptions.length === 0) {
+        if (!userSubscription) {
             return null;
         }
 
-        const validSubscription = orgSubscriptions.find((sub) =>
-            sub.stripeCurrentPeriodEnd &&
-            sub.stripeCurrentPeriodEnd + 86_400_000 > Date.now()
-        );
-
-        const subscriptionToReturn = validSubscription || orgSubscriptions[0];
-
         const isValid =
-            subscriptionToReturn.stripePriceId &&
-            subscriptionToReturn.stripeCurrentPeriodEnd + 86_400_000 > Date.now();
+            userSubscription.stripePriceId &&
+            userSubscription.stripeCurrentPeriodEnd + 86_400_000 > Date.now();
 
         return {
-            ...subscriptionToReturn,
+            ...userSubscription,
             isValid: !!isValid,
         };
+    },
+});
+
+export const getUserSubscription = query({
+    args: { userId: v.string() },
+    handler: async (ctx, args) => {
+        return await ctx.db
+            .query("userSubscription")
+            .withIndex("by_user", (q) => q.eq("userId", args.userId))
+            .unique();
     },
 });

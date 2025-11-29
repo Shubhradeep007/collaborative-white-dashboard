@@ -31,5 +31,33 @@ export default defineSchema({
         stripeCurrentPeriodEnd: v.number(),
     })
         .index("by_org", ["orgId"])
-        .index("by_subscription", ["stripeSubscriptionId"])
+        .index("by_subscription", ["stripeSubscriptionId"]),
+    userSubscription: defineTable({
+        userId: v.string(),
+        stripeCustomerId: v.string(),
+        stripeSubscriptionId: v.string(),
+        stripePriceId: v.string(),
+        stripeCurrentPeriodEnd: v.number(),
+    })
+        .index("by_user", ["userId"])
+        .index("by_subscription", ["stripeSubscriptionId"]),
+    users: defineTable({
+        clerkId: v.string(),
+        email: v.string(),
+        name: v.string(),
+        imageUrl: v.string(),
+        role: v.string(), // 'admin' | 'user'
+    })
+        .index("by_clerk_id", ["clerkId"]),
+    organizations: defineTable({
+        orgId: v.string(),
+        name: v.string(),
+        imageUrl: v.string(),
+    })
+        .index("by_org_id", ["orgId"]),
+    systemSettings: defineTable({
+        key: v.string(),
+        value: v.any(),
+    })
+        .index("by_key", ["key"])
 })

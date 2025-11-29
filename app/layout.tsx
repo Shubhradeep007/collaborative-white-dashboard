@@ -6,6 +6,7 @@ import ConvexClientProvider from "@/hooks/providers/ConvexClientProvider";
 import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/components/modals/modal-providers";
 import { GlobalLoadingProvider } from "@/components/providers/global-loading-provider";
+import { BanCheck } from "@/components/auth/ban-check";
 
 
 const geistSans = Geist({
@@ -42,7 +43,9 @@ export default function RootLayout({
           <ConvexClientProvider>
             <ModalProvider />
             <GlobalLoadingProvider>
-              {children}
+              <BanCheck>
+                {children}
+              </BanCheck>
             </GlobalLoadingProvider>
           </ConvexClientProvider>
 

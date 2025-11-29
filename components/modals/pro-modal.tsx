@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { useProModal } from "@/store/use-pro-modal";
 import { Button } from "@/components/ui/button";
 import { useAction } from "convex/react";
@@ -24,7 +25,7 @@ export const ProModal = () => {
             const data = await response.json();
             window.location.href = data.url;
         } catch (error) {
-            console.log(error);
+            toast.error("Something went wrong");
         } finally {
             setPending(false);
         }
@@ -59,7 +60,7 @@ export const ProModal = () => {
                         className="w-full"
                         size="sm"
                     >
-                        Upgrade
+                        Upgrade for ₹499/mo
                         <Zap className="w-4 h-4 ml-2 fill-white" />
                     </Button>
                 </div>

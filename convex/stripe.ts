@@ -3,15 +3,15 @@ import { mutation } from "./_generated/server";
 
 export const create = mutation({
     args: {
-        orgId: v.string(),
+        userId: v.string(),
         stripeCustomerId: v.string(),
         stripeSubscriptionId: v.string(),
         stripePriceId: v.string(),
         stripeCurrentPeriodEnd: v.number(),
     },
     handler: async (ctx, args) => {
-        await ctx.db.insert("orgSubscription", {
-            orgId: args.orgId,
+        await ctx.db.insert("userSubscription", {
+            userId: args.userId,
             stripeCustomerId: args.stripeCustomerId,
             stripeSubscriptionId: args.stripeSubscriptionId,
             stripePriceId: args.stripePriceId,
@@ -23,15 +23,13 @@ export const create = mutation({
 export const update = mutation({
     args: {
         stripeSubscriptionId: v.string(),
-        stripeCurrentPeriodEnd: v.number(),
         stripePriceId: v.string(),
+        stripeCurrentPeriodEnd: v.number(),
     },
     handler: async (ctx, args) => {
         const subscription = await ctx.db
-            .query("orgSubscription")
-            .withIndex("by_subscription", (q) =>
-                q.eq("stripeSubscriptionId", args.stripeSubscriptionId)
-            )
+            .query("userSubscription")
+            .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", args.stripeSubscriptionId))
             .unique();
 
         if (!subscription) {
@@ -39,8 +37,8 @@ export const update = mutation({
         }
 
         await ctx.db.patch(subscription._id, {
-            stripeCurrentPeriodEnd: args.stripeCurrentPeriodEnd,
             stripePriceId: args.stripePriceId,
+            stripeCurrentPeriodEnd: args.stripeCurrentPeriodEnd,
         });
     },
 });
@@ -51,10 +49,8 @@ export const remove = mutation({
     },
     handler: async (ctx, args) => {
         const subscription = await ctx.db
-            .query("orgSubscription")
-            .withIndex("by_subscription", (q) =>
-                q.eq("stripeSubscriptionId", args.stripeSubscriptionId)
-            )
+            .query("userSubscription")
+            .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", args.stripeSubscriptionId))
             .unique();
 
         if (!subscription) {

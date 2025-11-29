@@ -8,7 +8,7 @@ import { api } from "@/convex/_generated/api";
 const settingsUrl = process.env.NEXT_PUBLIC_APP_URL + "/dashboard?success=true";
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-export async function POST() {
+export async function POST(req: Request) {
     try {
         const { userId, orgId } = await auth();
         const user = await currentUser();
@@ -17,11 +17,20 @@ export async function POST() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const orgSubscription = await convex.query(api.subscriptions.get, { orgId });
+        // Check if user is banned
+        // We use getUserRole which takes clerkId, so we don't need the auth token
+        const userRole = await convex.query(api.users.getUserRole, { clerkId: userId });
 
-        if (orgSubscription && orgSubscription.stripeCustomerId) {
+        if (userRole === "banned") {
+            return new NextResponse("Account Suspended", { status: 403 });
+        }
+
+        // Check for existing user subscription
+        const userSubscription = await convex.query(api.subscriptions.getUserSubscription, { userId });
+
+        if (userSubscription && userSubscription.stripeCustomerId) {
             const stripeSession = await stripe.billingPortal.sessions.create({
-                customer: orgSubscription.stripeCustomerId,
+                customer: userSubscription.stripeCustomerId,
                 return_url: settingsUrl,
             });
 
@@ -40,12 +49,12 @@ export async function POST() {
             line_items: [
                 {
                     price_data: {
-                        currency: "USD",
+                        currency: "INR",
                         product_data: {
                             name: "Board Pro",
-                            description: "Unlimited boards for your organization",
+                            description: "Unlimited boards for you",
                         },
-                        unit_amount: 2000,
+                        unit_amount: 49900,
                         recurring: {
                             interval: "month",
                         },
@@ -54,7 +63,7 @@ export async function POST() {
                 },
             ],
             metadata: {
-                orgId,
+                userId,
             },
         });
 

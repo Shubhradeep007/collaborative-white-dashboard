@@ -14,6 +14,20 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import Loading from "./auth/loading";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+const AdminLink = () => {
+  const isAdmin = useQuery(api.users.checkIsAdmin);
+
+  if (!isAdmin) return null;
+
+  return (
+    <Button variant="ghost">
+      <Link href="/admin">Admin Panel</Link>
+    </Button>
+  );
+};
 
 const menuItems = [
   { name: "Features", href: "#link" },
@@ -43,7 +57,7 @@ export const HeroHeader = () => {
           className={cn(
             "mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12",
             isScrolled &&
-              "bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5"
+            "bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5"
           )}
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -116,6 +130,7 @@ export const HeroHeader = () => {
                   </Unauthenticated>
 
                   <Authenticated>
+                    <AdminLink />
                     <Button>
                       <Link href="/dashboard">Dashboard</Link>
                     </Button>

@@ -35,8 +35,9 @@ export async function POST(req: Request) {
             const subscription = await stripe.subscriptions.retrieve(
                 session.subscription as string
             ) as any;
-            if (!session?.metadata?.orgId) {
-                return new NextResponse("Org ID is required", { status: 400 });
+
+            if (!session?.metadata?.userId) {
+                return new NextResponse("User ID is required", { status: 400 });
             }
 
             const periodEnd = subscription.current_period_end
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
                 : Date.now() + 86400000; // Fallback to 1 day if missing
 
             await convex.mutation(api.stripe.create, {
-                orgId: session.metadata.orgId,
+                userId: session.metadata.userId,
                 stripeCustomerId: subscription.customer as string,
                 stripeSubscriptionId: subscription.id,
                 stripePriceId: subscription.items.data[0].price.id,
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
             const invoice = event.data.object as Stripe.Invoice;
             const subscriptionId = typeof (invoice as any).subscription === 'string'
                 ? (invoice as any).subscription
-                : (invoice as any).subscription?.id;
+                : ((invoice as any).subscription)?.id;
 
             if (!subscriptionId) {
                 return new NextResponse(null, { status: 200 });
@@ -82,6 +83,34 @@ export async function POST(req: Request) {
 
             await convex.mutation(api.stripe.remove, {
                 stripeSubscriptionId: subscription.id,
+            });
+        }
+
+        if ((event.type as string) === "organization.created") {
+            const { id, name, image_url } = event.data.object as { id: string; name: string; image_url: string };
+
+            await convex.mutation(api.organizations.create, {
+                orgId: id,
+                name: name,
+                imageUrl: image_url,
+            });
+        }
+
+        if ((event.type as string) === "organization.updated") {
+            const { id, name, image_url } = event.data.object as { id: string; name: string; image_url: string };
+
+            await convex.mutation(api.organizations.update, {
+                orgId: id,
+                name: name,
+                imageUrl: image_url,
+            });
+        }
+
+        if ((event.type as string) === "organization.deleted") {
+            const { id } = event.data.object as { id: string };
+
+            await convex.mutation(api.organizations.deleteOrg, {
+                orgId: id,
             });
         }
 

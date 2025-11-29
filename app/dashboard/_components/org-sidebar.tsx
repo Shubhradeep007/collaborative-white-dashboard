@@ -26,9 +26,7 @@ const OrgSidebar = () => {
   const { onOpen } = useProModal();
 
   const { organization } = useOrganization();
-  const subscription = useQuery(api.subscriptions.get,
-    organization ? { orgId: organization.id } : "skip"
-  );
+  const subscription = useQuery(api.subscriptions.get, {});
 
   const isPro = !!subscription?.isValid;
 
@@ -115,7 +113,7 @@ const OrgSidebar = () => {
           variant={isPro ? "ghost" : "ghost"}
         >
           <Banknote className="h-4 w-4 mr-2" />
-          {isPro ? "Pro Member" : "Upgrade to Pro"}
+          {isPro ? "Pro User" : "Upgrade to Pro"}
         </Button>
 
         {isPro && (
