@@ -39,7 +39,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
-          <Toaster />
+          <Toaster visibleToasts={1} expand toastOptions={{ duration: 3500 }} theme="light" position="top-right" />
           <ConvexClientProvider>
             <ModalProvider />
             <GlobalLoadingProvider>
