@@ -19,6 +19,7 @@ import { Trash2, RefreshCcw } from "lucide-react";
 import ConfirmModal from "@/components/confirm-modal";
 import { useState } from "react";
 import { syncOrganizations, deleteOrganizationAction, deleteOrganizationsAction } from "../actions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function OrganizationsPage() {
     const organizations = useQuery(api.admin.getOrganizations);
@@ -27,7 +28,21 @@ export default function OrganizationsPage() {
     const [isSyncing, setIsSyncing] = useState(false);
 
     if (organizations === undefined) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex-1 space-y-4 p-8 pt-6">
+                <div className="flex items-center justify-between space-y-2">
+                    <Skeleton className="h-10 w-48" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <div className="space-y-2">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+        );
     }
 
     const handleSelectAll = (checked: boolean) => {

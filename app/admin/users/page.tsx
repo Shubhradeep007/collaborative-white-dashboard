@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 
 import ConfirmModal from "@/components/confirm-modal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UsersPage() {
     const users = useQuery(api.admin.getUsers);
@@ -103,6 +104,16 @@ export default function UsersPage() {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const deleteUsers = useMutation(api.admin.deleteUsers);
 
+    const handleBulkDelete = async () => {
+        try {
+            await deleteUsers({ userIds: selectedIds as any });
+            toast.success("Users deleted");
+            setSelectedIds([]);
+        } catch (error) {
+            toast.error("Failed to delete users");
+        }
+    };
+
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
             setSelectedIds(users?.map((u) => u._id) || []);
@@ -119,18 +130,22 @@ export default function UsersPage() {
         }
     };
 
-    const handleBulkDelete = async () => {
-        try {
-            await deleteUsers({ userIds: selectedIds as any });
-            toast.success("Users deleted");
-            setSelectedIds([]);
-        } catch (error) {
-            toast.error("Failed to delete users");
-        }
-    };
-
     if (!users) {
-        return <div>Loading users...</div>;
+        return (
+            <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-10 w-32" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <div className="space-y-2">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -200,8 +215,8 @@ export default function UsersPage() {
                                 <TableCell>{user.role}</TableCell>
                                 <TableCell>
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.plan === "Pro"
-                                            ? "bg-green-100 text-green-700"
-                                            : "bg-gray-100 text-gray-700"
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-gray-100 text-gray-700"
                                         }`}>
                                         {user.plan}
                                     </span>

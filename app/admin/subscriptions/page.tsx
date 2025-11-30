@@ -18,6 +18,7 @@ import { XCircle } from "lucide-react";
 import { useAction } from "convex/react";
 import ConfirmModal from "@/components/confirm-modal";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SubscriptionsPage() {
     const subscriptions = useQuery(api.admin.getSubscriptions);
@@ -67,7 +68,21 @@ export default function SubscriptionsPage() {
     };
 
     if (!subscriptions) {
-        return <div>Loading subscriptions...</div>;
+        return (
+            <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-10 w-48" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <div className="space-y-2">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+        );
     }
 
     return (
