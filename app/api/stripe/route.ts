@@ -39,6 +39,9 @@ export async function POST(req: Request) {
             });
         }
 
+        // Fetch trial duration setting
+        const trialDuration = await convex.query(api.settings.getTrialDuration);
+
         const stripeSession = await stripe.checkout.sessions.create({
             success_url: settingsUrl,
             cancel_url: settingsUrl,
@@ -51,8 +54,9 @@ export async function POST(req: Request) {
                     price_data: {
                         currency: "INR",
                         product_data: {
-                            name: "Board Pro",
-                            description: "Unlimited boards for you",
+                            name: "Sparky Board Pro",
+                            description: "Unlock unlimited boards, advanced collaboration tools, and priority support.",
+                            images: ["https://files.edgestore.dev/4s434828/public/images/pro-plan-card.png"], // Using a placeholder or existing asset if available, otherwise a generic high-quality URL
                         },
                         unit_amount: 49900,
                         recurring: {
@@ -62,8 +66,19 @@ export async function POST(req: Request) {
                     quantity: 1,
                 },
             ],
+            allow_promotion_codes: true,
             metadata: {
                 userId,
+            },
+            subscription_data: trialDuration > 0 ? {
+                trial_period_days: trialDuration,
+                metadata: {
+                    userId,
+                }
+            } : {
+                metadata: {
+                    userId,
+                }
             },
         });
 

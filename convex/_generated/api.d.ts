@@ -14,6 +14,7 @@ import type * as board from "../board.js";
 import type * as boards from "../boards.js";
 import type * as crons from "../crons.js";
 import type * as organizations from "../organizations.js";
+import type * as settings from "../settings.js";
 import type * as stripe from "../stripe.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as userActions from "../userActions.js";
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   boards: typeof boards;
   crons: typeof crons;
   organizations: typeof organizations;
+  settings: typeof settings;
   stripe: typeof stripe;
   subscriptions: typeof subscriptions;
   userActions: typeof userActions;

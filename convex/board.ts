@@ -45,8 +45,15 @@ export const create = mutation({
         .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
         .collect();
 
-      if (boards.length >= 2) {
-        throw new Error("You have reached your limit of 2 boards. Upgrade to Pro for unlimited boards!");
+      const maxBoardsSetting = await ctx.db
+        .query("systemSettings")
+        .withIndex("by_key", (q) => q.eq("key", "maxBoards"))
+        .unique();
+
+      const limit = maxBoardsSetting ? parseInt(maxBoardsSetting.value) : 2; // Default to 2 if not set
+
+      if (boards.length >= limit) {
+        throw new Error(`You have reached your limit of ${limit} boards. Upgrade to Pro for unlimited boards!`);
       }
     }
 
