@@ -3,11 +3,14 @@
 import { useMutation } from 'convex/react'
 import { useState } from 'react'
 
-export const useApiMutation = (mutationFunction: any) => {
+import { FunctionReference } from "convex/server";
+
+export const useApiMutation = (mutationFunction: FunctionReference<"mutation">) => {
 
     const [pending, setPending] = useState(false)
     const apiMutation = useMutation(mutationFunction)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mutate = (payload: any) => {
         setPending(true)
         return apiMutation(payload)

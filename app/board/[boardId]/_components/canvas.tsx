@@ -7,6 +7,7 @@ import { Toolbar } from "./toolbar"
 import { Camera, CanvasMode, CanvasState, Color, LayerType, Point, Side, XYWH } from "@/types/canvas";
 
 import { useHistory, useCanUndo, useCanRedo, useMutation, useStorage, useOthersMapped, useSelf } from "@liveblocks/react";
+import { useQuery } from "convex/react";
 import { CursorPresence } from "./cursor-presence";
 import { colorToCss, connectionIdToColor, findIntersectingLayersWithReactangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounce } from "@/lib/utils";
 import { nanoid } from "nanoid";
@@ -509,11 +510,15 @@ const Canvas = ({ boardId }: CanvasProps) => {
     return () => clearTimeout(saveThumbnail);
   }, [history, layerIds, updateBoard, boardId]);
 
+  const data = useQuery(api.board.get, { id: boardId as Id<"boards"> })
+  const subscription = useQuery(api.subscriptions.get, data ? { orgId: data.orgId } : "skip");
+  const isPro = !!subscription?.isValid;
+
   return (
     <>
       <main className="h-full w-full reletive bg-neutral-100 touch-none">
         <Info boardId={boardId} />
-        <Priticipants />
+        <Priticipants isPro={isPro} />
         <Toolbar
           canvasState={canvasState}
           setCanvasState={setCanvasState}
@@ -521,11 +526,13 @@ const Canvas = ({ boardId }: CanvasProps) => {
           canRedo={canRedo}
           undo={history.undo}
           redo={history.redo}
+          isPro={isPro}
         />
 
         <SelectionTool
           camera={camera}
           setLastUseColor={setLastUseColor}
+          isPro={isPro}
         />
 
         <svg

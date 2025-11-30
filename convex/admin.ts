@@ -1,10 +1,8 @@
 import { v } from "convex/values";
-import { mutation, query, action, internalMutation } from "./_generated/server";
-import { api, internal } from "./_generated/api";
+import { mutation, query, internalMutation, QueryCtx, MutationCtx } from "./_generated/server";
 
 // Check if user is admin
-// Check if user is admin
-export async function checkAdmin(ctx: any) {
+export async function checkAdmin(ctx: QueryCtx | MutationCtx) {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
         throw new Error("Unauthorized");
@@ -12,7 +10,7 @@ export async function checkAdmin(ctx: any) {
 
     const user = await ctx.db
         .query("users")
-        .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
         .unique();
 
     if (!user || user.role !== "admin") {
@@ -68,6 +66,19 @@ export const deleteUser = mutation({
     args: { userId: v.id("users") },
     handler: async (ctx, args) => {
         await checkAdmin(ctx);
+
+        const user = await ctx.db.get(args.userId);
+        if (!user) return;
+
+        const subscription = await ctx.db
+            .query("userSubscription")
+            .withIndex("by_user", (q) => q.eq("userId", user.clerkId))
+            .unique();
+
+        if (subscription) {
+            await ctx.db.delete(subscription._id);
+        }
+
         await ctx.db.delete(args.userId);
     },
 });

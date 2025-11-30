@@ -22,6 +22,8 @@ import { toPng, toJpeg } from "html-to-image";
 import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 
+import { useProModal } from "@/store/use-pro-modal";
+
 interface InfoProps {
   boardId: string;
 }
@@ -42,8 +44,12 @@ const TabSaprator = () => {
 export const Info = ({ boardId }: InfoProps) => {
 
   const { onOpen } = useRenameModel()
+  const { onOpen: onOpenProModal } = useProModal();
 
   const data = useQuery(api.board.get, { id: boardId as Id<"boards"> })
+  const subscription = useQuery(api.subscriptions.get, data ? { orgId: data.orgId } : "skip");
+
+  const isPro = subscription?.isValid;
 
   const onExport = async (type: 'png' | 'jpeg' | 'pdf') => {
     const element = document.getElementById('canvas-svg');
@@ -166,14 +172,26 @@ export const Info = ({ boardId }: InfoProps) => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" sideOffset={10}>
-          <DropdownMenuItem onClick={() => onExport('png')} className="cursor-pointer">
+          <DropdownMenuItem
+            onClick={() => isPro ? onExport('png') : onOpenProModal()}
+            className="cursor-pointer"
+          >
             Export as PNG
+            {!isPro && <span className="ml-auto text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">Pro</span>}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onExport('jpeg')} className="cursor-pointer">
+          <DropdownMenuItem
+            onClick={() => isPro ? onExport('jpeg') : onOpenProModal()}
+            className="cursor-pointer"
+          >
             Export as JPEG
+            {!isPro && <span className="ml-auto text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">Pro</span>}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onExport('pdf')} className="cursor-pointer">
+          <DropdownMenuItem
+            onClick={() => isPro ? onExport('pdf') : onOpenProModal()}
+            className="cursor-pointer"
+          >
             Export as PDF
+            {!isPro && <span className="ml-auto text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">Pro</span>}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

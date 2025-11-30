@@ -13,9 +13,10 @@ import { useDeleteLayers } from "@/hooks/use-delete-layers"
 interface SelectionToolProps {
     camera: Camera
     setLastUseColor: (color: Color) => void
+    isPro: boolean
 }
 
-export const SelectionTool = memo(({ camera, setLastUseColor }: SelectionToolProps) => {
+export const SelectionTool = memo(({ camera, setLastUseColor, isPro }: SelectionToolProps) => {
 
     const selection = useSelf((me) => me.presence.selection)
 
@@ -99,6 +100,7 @@ export const SelectionTool = memo(({ camera, setLastUseColor }: SelectionToolPro
 
             <ColorPicker
                 onChange={setFill}
+                isPro={isPro}
             />
 
             <div className="flex flex-col gap-y-0.5">

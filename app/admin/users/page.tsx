@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id, Doc } from "@/convex/_generated/dataModel";
 import {
     Table,
     TableBody,
@@ -55,7 +56,7 @@ export default function UsersPage() {
         }
     };
 
-    const handleBan = async (userId: any) => {
+    const handleBan = async (userId: Id<"users">) => {
         try {
             await banUser({ userId });
             toast.success("User banned");
@@ -64,7 +65,7 @@ export default function UsersPage() {
         }
     };
 
-    const handleUnban = async (userId: any) => {
+    const handleUnban = async (userId: Id<"users">) => {
         try {
             await unbanUser({ userId });
             toast.success("User unbanned");
@@ -73,7 +74,7 @@ export default function UsersPage() {
         }
     };
 
-    const handleDelete = async (userId: any) => {
+    const handleDelete = async (userId: Id<"users">) => {
         try {
             await deleteUser({ userId });
             toast.success("User deleted");
@@ -82,7 +83,7 @@ export default function UsersPage() {
         }
     };
 
-    const [editingUser, setEditingUser] = useState<any>(null);
+    const [editingUser, setEditingUser] = useState<Doc<"users"> | null>(null);
     const updateUser = useMutation(api.admin.updateUser);
 
     const handleUpdate = async (e: React.FormEvent) => {
@@ -101,12 +102,12 @@ export default function UsersPage() {
         }
     };
 
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [selectedIds, setSelectedIds] = useState<Id<"users">[]>([]);
     const deleteUsers = useMutation(api.admin.deleteUsers);
 
     const handleBulkDelete = async () => {
         try {
-            await deleteUsers({ userIds: selectedIds as any });
+            await deleteUsers({ userIds: selectedIds });
             toast.success("Users deleted");
             setSelectedIds([]);
         } catch (error) {
@@ -122,7 +123,7 @@ export default function UsersPage() {
         }
     };
 
-    const handleSelect = (id: string, checked: boolean) => {
+    const handleSelect = (id: Id<"users">, checked: boolean) => {
         if (checked) {
             setSelectedIds([...selectedIds, id]);
         } else {
@@ -283,14 +284,14 @@ export default function UsersPage() {
                             <Input
                                 id="name"
                                 value={editingUser?.name || ""}
-                                onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                                onChange={(e) => editingUser && setEditingUser({ ...editingUser, name: e.target.value })}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="role">Role</Label>
                             <Select
                                 value={editingUser?.role || "user"}
-                                onValueChange={(value) => setEditingUser({ ...editingUser, role: value })}
+                                onValueChange={(value) => editingUser && setEditingUser({ ...editingUser, role: value })}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select role" />

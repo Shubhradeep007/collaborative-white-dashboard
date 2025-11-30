@@ -3,7 +3,7 @@ import { query } from "./_generated/server";
 
 export const get = query({
     args: { orgId: v.optional(v.string()) }, // Made optional to not break existing calls immediately, but logic changes
-    handler: async (ctx, args) => {
+    handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity();
 
         if (!identity) {

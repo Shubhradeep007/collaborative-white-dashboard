@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { internalMutation, mutation } from "./_generated/server";
+import { mutation } from "./_generated/server";
 import { checkAdmin } from "./admin";
 
 export const create = mutation({

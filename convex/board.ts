@@ -28,15 +28,15 @@ export const create = mutation({
     const randomImage = images[Math.floor(Math.random() * images.length)];
 
     // Check subscription status
-    const orgSubscriptions = await ctx.db
-      .query("orgSubscription")
-      .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
-      .collect();
+    const userSubscription = await ctx.db
+      .query("userSubscription")
+      .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+      .unique();
 
-    const isPro = orgSubscriptions.some((sub) =>
-      sub.stripeCurrentPeriodEnd &&
-      sub.stripeCurrentPeriodEnd + 86_400_000 > Date.now()
-    );
+    const isPro =
+      userSubscription &&
+      userSubscription.stripeCurrentPeriodEnd &&
+      userSubscription.stripeCurrentPeriodEnd + 86_400_000 > Date.now();
 
     // Enforce board limit for free users
     if (!isPro) {
@@ -114,7 +114,7 @@ export const update = mutation({
       throw new Error("Title can not be more then 60 character");
     }
 
-    const patchData: any = {};
+    const patchData: Record<string, unknown> = {};
     if (title) patchData.title = title;
     if (args.imageUrl) patchData.imageUrl = args.imageUrl;
 

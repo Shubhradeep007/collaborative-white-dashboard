@@ -8,7 +8,7 @@ export const checkSubscriptionExpiry = internalMutation({
         const threeDaysFromNow = now + 3 * 24 * 60 * 60 * 1000;
 
         const expiringSubscriptions = await ctx.db
-            .query("orgSubscription")
+            .query("userSubscription")
             .collect();
 
         for (const sub of expiringSubscriptions) {

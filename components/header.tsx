@@ -14,7 +14,7 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import Loading from "./auth/loading";
+import { LoaderThree } from "@/components/ui/loader";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -115,7 +115,7 @@ export const HeroHeader = () => {
 
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                 <ClerkLoading>
-                  <Loading /> {/* <-- Show loader WHILE Clerk is checking authentication */}
+                  <LoaderThree /> {/* <-- Show loader WHILE Clerk is checking authentication */}
                 </ClerkLoading>
 
                 <ClerkLoaded>

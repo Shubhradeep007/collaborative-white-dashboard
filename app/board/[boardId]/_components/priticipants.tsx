@@ -6,7 +6,11 @@ import { useOthers, useSelf } from "@liveblocks/react/suspense";
 
 const MAX_SHOWN_USERS = 3
 
-export const Priticipants = () => {
+interface PriticipantsProps {
+  isPro: boolean;
+}
+
+export const Priticipants = ({ isPro }: PriticipantsProps) => {
   const users = useOthers()
   const currentUser = useSelf()
 
@@ -28,22 +32,28 @@ export const Priticipants = () => {
             )
           })}
 
-          {currentUser && (
-            <UserAvatar 
-              src={currentUser.info?.picture}
-              name={`${currentUser.info?.name} (You)`}
-              fallback={currentUser.info?.name?.[0] || "T"}
-              borderColor={connectionIdToColor(currentUser.connectionId)}
-            />
-          )}
+        {currentUser && (
+          <UserAvatar
+            src={currentUser.info?.picture}
+            name={`${currentUser.info?.name} (You)`}
+            fallback={currentUser.info?.name?.[0] || "T"}
+            borderColor={connectionIdToColor(currentUser.connectionId)}
+          />
+        )}
 
-          {hasMoreUsers && (
-            <UserAvatar
-              name={`${users.length - MAX_SHOWN_USERS} more`}
-              fallback={`+${users.length - MAX_SHOWN_USERS}`}
-              borderColor={connectionIdToColor(users.length)}
-            />
-          )}
+        {hasMoreUsers && (
+          <UserAvatar
+            name={`${users.length - MAX_SHOWN_USERS} more`}
+            fallback={`+${users.length - MAX_SHOWN_USERS}`}
+            borderColor={connectionIdToColor(users.length)}
+          />
+        )}
+
+        {!isPro && users.length > 2 && (
+          <div className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-md font-medium">
+            Limit Reached
+          </div>
+        )}
       </div>
     </div>
   );

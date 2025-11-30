@@ -27,6 +27,7 @@ const RenameModal = () => {
 
     useEffect(() => {
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTitle(initialValues.title);
 
     }, [initialValues.title]);

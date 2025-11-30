@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import { action } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { createClerkClient } from '@clerk/nextjs/server';
+import Stripe from "stripe";
 
 export const banUser = action({
     args: { userId: v.id("users") },
@@ -53,7 +54,10 @@ export const cancelSubscription = action({
         const admin = await ctx.runQuery(api.admin.checkAdminIdentity);
         if (!admin) throw new Error("Unauthorized");
 
-        const stripe = new (require("stripe"))(process.env.STRIPE_API_KEY);
+        const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            apiVersion: "2025-11-17.clover" as any,
+        });
 
         try {
             await stripe.subscriptions.cancel(args.subscriptionId);
@@ -71,7 +75,10 @@ export const deleteOrganization = action({
         const admin = await ctx.runQuery(api.admin.checkAdminIdentity);
         if (!admin) throw new Error("Unauthorized");
 
-        const stripe = new (require("stripe"))(process.env.STRIPE_API_KEY);
+        const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            apiVersion: "2025-11-17.clover" as any,
+        });
 
         if (args.subscriptionId) {
             try {
@@ -96,7 +103,10 @@ export const deleteOrganizations = action({
         const admin = await ctx.runQuery(api.admin.checkAdminIdentity);
         if (!admin) throw new Error("Unauthorized");
 
-        const stripe = new (require("stripe"))(process.env.STRIPE_API_KEY);
+        const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            apiVersion: "2025-11-17.clover" as any,
+        });
 
         for (const org of args.orgs) {
             if (org.subscriptionId) {
@@ -125,7 +135,10 @@ export const cancelSubscriptions = action({
         const admin = await ctx.runQuery(api.admin.checkAdminIdentity);
         if (!admin) throw new Error("Unauthorized");
 
-        const stripe = new (require("stripe"))(process.env.STRIPE_API_KEY);
+        const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            apiVersion: "2025-11-17.clover" as any,
+        });
 
         for (const sub of args.subscriptions) {
             try {

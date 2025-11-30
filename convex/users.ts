@@ -1,6 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, internalMutation, action } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { mutation, query, internalMutation } from "./_generated/server";
 
 
 export const createUser = mutation({
@@ -148,5 +147,3 @@ export const upsertUserInternal = internalMutation({
         }
     },
 });
-
-

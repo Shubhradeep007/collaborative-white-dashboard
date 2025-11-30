@@ -2,7 +2,6 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Layout, CreditCard, IndianRupee } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@clerk/nextjs";
@@ -36,7 +35,7 @@ export default function AdminDashboard() {
                         Dashboard
                     </h2>
                     <p className="text-gray-500 mt-2">
-                        Welcome back, <span className="font-semibold text-gray-900">{user?.firstName || user?.fullName || 'Admin'}</span>! Here's what's happening today.
+                        Welcome back, <span className="font-semibold text-gray-900">{user?.firstName || user?.fullName || 'Admin'}</span>! Here&apos;s what&apos;s happening today.
                     </p>
                 </div>
             </div>
@@ -97,7 +96,7 @@ export default function AdminDashboard() {
                     <div className="text-3xl font-bold text-gray-900 mt-1">
                         {stats.subscriptionsCount}
                     </div>
-                    <p className="text-xs text-gray-400 mt-2">Active pro plans</p>
+                    <p className="text-muted-foreground">Here&apos;s an overview of your system&apos;s performance.</p>
                 </div>
             </div>
         </div>

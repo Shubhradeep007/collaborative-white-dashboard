@@ -34,14 +34,17 @@ export async function POST(req: Request) {
             const session = event.data.object as Stripe.Checkout.Session;
             const subscription = await stripe.subscriptions.retrieve(
                 session.subscription as string
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ) as any;
 
             if (!session?.metadata?.userId) {
                 return new NextResponse("User ID is required", { status: 400 });
             }
 
-            const periodEnd = subscription.current_period_end
-                ? subscription.current_period_end * 1000
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const subAny = subscription as any;
+            const periodEnd = subAny.current_period_end
+                ? subAny.current_period_end * 1000
                 : Date.now() + 2592000000; // Fallback to 30 days if missing
 
             await convex.mutation(api.stripe.create, {
@@ -55,8 +58,11 @@ export async function POST(req: Request) {
 
         if (event.type === "invoice.payment_succeeded") {
             const invoice = event.data.object as Stripe.Invoice;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const subscriptionId = typeof (invoice as any).subscription === 'string'
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ? (invoice as any).subscription
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 : ((invoice as any).subscription)?.id;
 
             if (!subscriptionId) {
@@ -65,10 +71,13 @@ export async function POST(req: Request) {
 
             const subscription = await stripe.subscriptions.retrieve(
                 subscriptionId as string
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ) as any;
 
-            const periodEnd = subscription.current_period_end
-                ? subscription.current_period_end * 1000
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const subAny = subscription as any;
+            const periodEnd = subAny.current_period_end
+                ? subAny.current_period_end * 1000
                 : Date.now() + 2592000000; // Fallback to 30 days if missing
 
             await convex.mutation(api.stripe.update, {

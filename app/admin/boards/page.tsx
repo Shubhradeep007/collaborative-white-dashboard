@@ -17,12 +17,13 @@ import Link from "next/link";
 import { format } from "date-fns";
 import ConfirmModal from "@/components/confirm-modal";
 import { useState } from "react";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function AdminBoardsPage() {
     const boards = useQuery(api.admin.getBoards);
     const deleteBoard = useMutation(api.admin.deleteBoard);
 
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id: Id<"boards">) => {
         try {
             await deleteBoard({ id });
             toast.success("Board deleted");
@@ -31,7 +32,7 @@ export default function AdminBoardsPage() {
         }
     };
 
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [selectedIds, setSelectedIds] = useState<Id<"boards">[]>([]);
     const deleteBoards = useMutation(api.admin.deleteBoards);
 
     const handleSelectAll = (checked: boolean) => {
@@ -42,7 +43,7 @@ export default function AdminBoardsPage() {
         }
     };
 
-    const handleSelect = (id: string, checked: boolean) => {
+    const handleSelect = (id: Id<"boards">, checked: boolean) => {
         if (checked) {
             setSelectedIds([...selectedIds, id]);
         } else {
@@ -52,7 +53,7 @@ export default function AdminBoardsPage() {
 
     const handleBulkDelete = async () => {
         try {
-            await deleteBoards({ ids: selectedIds as any });
+            await deleteBoards({ ids: selectedIds });
             toast.success("Boards deleted");
             setSelectedIds([]);
         } catch (error) {

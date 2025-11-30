@@ -22,12 +22,14 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (trialDurationSetting) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTrialDuration(trialDurationSetting.value);
         }
     }, [trialDurationSetting]);
 
     useEffect(() => {
         if (maxBoardsSetting) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxBoards(maxBoardsSetting.value);
         }
     }, [maxBoardsSetting]);
