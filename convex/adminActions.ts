@@ -48,7 +48,7 @@ export const unbanUser = action({
 });
 
 export const cancelSubscription = action({
-    args: { subscriptionId: v.string(), orgId: v.string() },
+    args: { subscriptionId: v.string(), userId: v.string() },
     handler: async (ctx, args) => {
         const admin = await ctx.runQuery(api.admin.checkAdminIdentity);
         if (!admin) throw new Error("Unauthorized");
@@ -61,7 +61,7 @@ export const cancelSubscription = action({
             console.error("Failed to cancel subscription in Stripe:", error);
         }
 
-        await ctx.runMutation(internal.admin.cancelSubscriptionInternal, { orgId: args.orgId });
+        await ctx.runMutation(internal.admin.cancelSubscriptionInternal, { subscriptionId: args.subscriptionId });
     },
 });
 
@@ -118,7 +118,7 @@ export const cancelSubscriptions = action({
     args: {
         subscriptions: v.array(v.object({
             subscriptionId: v.string(),
-            orgId: v.string()
+            userId: v.string()
         }))
     },
     handler: async (ctx, args) => {
@@ -136,7 +136,7 @@ export const cancelSubscriptions = action({
         }
 
         await ctx.runMutation(internal.admin.cancelSubscriptionsInternal, {
-            orgIds: args.subscriptions.map(s => s.orgId)
+            subscriptionIds: args.subscriptions.map(s => s.subscriptionId)
         });
     },
 });

@@ -26,9 +26,9 @@ export default function SubscriptionsPage() {
 
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-    const handleCancel = async (subscriptionId: string, orgId: string) => {
+    const handleCancel = async (subscriptionId: string, userId: string) => {
         try {
-            await cancelSubscription({ subscriptionId, orgId });
+            await cancelSubscription({ subscriptionId, userId });
             toast.success("Subscription cancelled");
         } catch (error) {
             toast.error("Failed to cancel subscription");
@@ -55,7 +55,7 @@ export default function SubscriptionsPage() {
         try {
             const subsToCancel = selectedIds.map(id => {
                 const sub = subscriptions?.find(s => s.stripeSubscriptionId === id);
-                return { subscriptionId: id, orgId: sub?.orgId || "" };
+                return { subscriptionId: id, userId: sub?.userId || "" };
             });
 
             await cancelSubscriptions({ subscriptions: subsToCancel });
@@ -99,7 +99,7 @@ export default function SubscriptionsPage() {
                                     className="h-4 w-4 rounded border-gray-300"
                                 />
                             </TableHead>
-                            <TableHead>Org ID</TableHead>
+                            <TableHead>User Name</TableHead>
                             <TableHead>Stripe Customer</TableHead>
                             <TableHead>Subscription ID</TableHead>
                             <TableHead>Period End</TableHead>
@@ -118,7 +118,7 @@ export default function SubscriptionsPage() {
                                         className="h-4 w-4 rounded border-gray-300"
                                     />
                                 </TableCell>
-                                <TableCell className="font-mono text-xs">{sub.orgId}</TableCell>
+                                <TableCell className="font-medium text-sm">{sub.userName}</TableCell>
                                 <TableCell className="font-mono text-xs">
                                     {sub.stripeCustomerId}
                                 </TableCell>
@@ -127,15 +127,15 @@ export default function SubscriptionsPage() {
                                 </TableCell>
                                 <TableCell>
                                     {sub.stripeCurrentPeriodEnd
-                                        ? format(new Date(sub.stripeCurrentPeriodEnd), "PPP")
+                                        ? format(new Date(sub.stripeCurrentPeriodEnd), "PP p")
                                         : "N/A"}
                                 </TableCell>
                                 <TableCell>Pro</TableCell>
                                 <TableCell className="text-right">
                                     <ConfirmModal
                                         header="Cancel Subscription?"
-                                        description="This will cancel the subscription immediately. The organization will lose Pro features."
-                                        onConfirm={() => handleCancel(sub.stripeSubscriptionId, sub.orgId)}
+                                        description="This will cancel the subscription immediately. The user will lose Pro features."
+                                        onConfirm={() => handleCancel(sub.stripeSubscriptionId, sub.userId)}
                                     >
                                         <Button
                                             variant="ghost"

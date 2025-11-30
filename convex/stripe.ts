@@ -10,13 +10,25 @@ export const create = mutation({
         stripeCurrentPeriodEnd: v.number(),
     },
     handler: async (ctx, args) => {
-        await ctx.db.insert("userSubscription", {
-            userId: args.userId,
-            stripeCustomerId: args.stripeCustomerId,
-            stripeSubscriptionId: args.stripeSubscriptionId,
-            stripePriceId: args.stripePriceId,
-            stripeCurrentPeriodEnd: args.stripeCurrentPeriodEnd,
-        });
+        const existing = await ctx.db
+            .query("userSubscription")
+            .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", args.stripeSubscriptionId))
+            .unique();
+
+        if (existing) {
+            await ctx.db.patch(existing._id, {
+                stripePriceId: args.stripePriceId,
+                stripeCurrentPeriodEnd: args.stripeCurrentPeriodEnd,
+            });
+        } else {
+            await ctx.db.insert("userSubscription", {
+                userId: args.userId,
+                stripeCustomerId: args.stripeCustomerId,
+                stripeSubscriptionId: args.stripeSubscriptionId,
+                stripePriceId: args.stripePriceId,
+                stripeCurrentPeriodEnd: args.stripeCurrentPeriodEnd,
+            });
+        }
     },
 });
 

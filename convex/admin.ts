@@ -83,11 +83,11 @@ export const deleteUsers = mutation({
 });
 
 export const cancelSubscriptionInternal = internalMutation({
-    args: { orgId: v.string() },
+    args: { subscriptionId: v.string() },
     handler: async (ctx, args) => {
         const subscriptions = await ctx.db
-            .query("orgSubscription")
-            .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
+            .query("userSubscription")
+            .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", args.subscriptionId))
             .collect();
 
         for (const subscription of subscriptions) {
@@ -97,12 +97,12 @@ export const cancelSubscriptionInternal = internalMutation({
 });
 
 export const cancelSubscriptionsInternal = internalMutation({
-    args: { orgIds: v.array(v.string()) },
+    args: { subscriptionIds: v.array(v.string()) },
     handler: async (ctx, args) => {
-        for (const orgId of args.orgIds) {
+        for (const subscriptionId of args.subscriptionIds) {
             const subscriptions = await ctx.db
-                .query("orgSubscription")
-                .withIndex("by_org", (q) => q.eq("orgId", orgId))
+                .query("userSubscription")
+                .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", subscriptionId))
                 .collect();
 
             for (const subscription of subscriptions) {
@@ -354,7 +354,15 @@ export const getSubscriptions = query({
     args: {},
     handler: async (ctx) => {
         await checkAdmin(ctx);
-        return await ctx.db.query("orgSubscription").collect();
+        const subscriptions = await ctx.db.query("userSubscription").collect();
+        const users = await ctx.db.query("users").collect();
+
+        const userMap = new Map(users.map(u => [u.clerkId, u.name]));
+
+        return subscriptions.map(sub => ({
+            ...sub,
+            userName: userMap.get(sub.userId) || "Unknown User"
+        }));
     },
 });
 

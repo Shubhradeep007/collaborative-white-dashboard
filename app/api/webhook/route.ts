@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
             const periodEnd = subscription.current_period_end
                 ? subscription.current_period_end * 1000
-                : Date.now() + 86400000; // Fallback to 1 day if missing
+                : Date.now() + 2592000000; // Fallback to 30 days if missing
 
             await convex.mutation(api.stripe.create, {
                 userId: session.metadata.userId,
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
             const periodEnd = subscription.current_period_end
                 ? subscription.current_period_end * 1000
-                : Date.now() + 86400000;
+                : Date.now() + 2592000000; // Fallback to 30 days if missing
 
             await convex.mutation(api.stripe.update, {
                 stripeSubscriptionId: subscription.id,
